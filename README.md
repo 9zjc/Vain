@@ -1,11 +1,11 @@
 # Vain
 
-Vain-branded Roblox source package based on the public source repositories supplied for this project.
+Vain bootstrap and BedWars modules.
 
 ## Loadstring
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/9zjc/Vain/main/NewMainScript.lua", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/9zjc/Vain/main/Vain.lua", true))()
 ```
 
-The loader downloads the compiled files from this repository into the local `vain` cache.
+`Vain.lua` loads the Vain GUI, universal modules, the current game module, and the Vain-specific extensions. The existing `api.catvape.dev` authentication endpoints are intentionally unchanged until a replacement Vain backend is available.
