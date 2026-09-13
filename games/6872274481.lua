@@ -30,7 +30,7 @@ end
 local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
 
--- Vain BedWars module: removed the obsolete VapeV4 shutdown guard.
+-- Vain BedWars module: removed the obsolete framework shutdown guard.
 
 local vain = shared.vain
 local entitylib = vain.Libraries.entity
