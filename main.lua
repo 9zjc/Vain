@@ -42,7 +42,18 @@ end
 
 local function finishLoading()
 	vape.Init = nil
-	vape:Load()
+	local loaded, loadError = pcall(function()
+		vape:Load()
+	end)
+	if not loaded then
+		if vape.ClearLoadingState then
+			vape:ClearLoadingState()
+		end
+		if vape.CreateNotification then
+			vape:CreateNotification('Vain', 'Failed to finish loading: '..tostring(loadError), 15, 'alert')
+		end
+		return false
+	end
 	task.spawn(function()
 		repeat
 			vape:Save()
@@ -79,6 +90,7 @@ local function finishLoading()
 			vape:CreateNotification('Finished Loading', vape.VapeButton and 'Press the button in the top right to open GUI' or 'Press '..table.concat(vape.GUIBind.Keys, ' + '):upper()..' to open GUI', 5)
 		end
 	end
+	return true
 end
 
 if not isfile('vain/profiles/gui.txt') then
@@ -93,17 +105,26 @@ vape = loadstring(downloadFile('vain/guis/'..gui..'.lua'), 'gui')()
 shared.vape = vape
 
 if not shared.VapeIndependent then
-	loadstring(downloadFile('vain/games/universal.lua'), 'universal')()
-	if isfile('vain/games/'..game.PlaceId..'.lua') then
-		loadstring(readfile('vain/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
-	else
-		if not shared.VapeDeveloper then
-			local success, data = pcall(downloadFile, 'vain/games/'..game.PlaceId..'.lua')
-			if success then
-				loadstring(data, tostring(game.PlaceId))(...)
-			end
-		end
+	local universalSuccess, universalError = pcall(function()
+		loadstring(downloadFile('vain/games/universal.lua'), 'universal')()
+	end)
+	if not universalSuccess and vape.CreateNotification then
+		vape:CreateNotification('Vain', 'Universal module failed: '..tostring(universalError), 15, 'alert')
 	end
+
+	local gamePath = 'vain/games/'..game.PlaceId..'.lua'
+	local gameSuccess, gameData = pcall(downloadFile, gamePath)
+	if gameSuccess and gameData then
+		local moduleSuccess, moduleError = pcall(function()
+			loadstring(gameData, tostring(game.PlaceId))(...)
+		end)
+		if not moduleSuccess and vape.CreateNotification then
+			vape:CreateNotification('Vain', 'Game module failed: '..tostring(moduleError), 15, 'alert')
+		end
+	elseif not gameSuccess and vape.CreateNotification then
+		vape:CreateNotification('Vain', 'Game module download failed: '..tostring(gameData), 15, 'alert')
+	end
+
 	finishLoading()
 else
 	vape.Init = finishLoading
