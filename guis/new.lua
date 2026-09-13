@@ -219,10 +219,15 @@ do
 		return (callback or readfile)(path)
 	end
 
-	getvainasset = not inputService.TouchEnabled and getcustomasset and function(path)
-		return downloadFile(path, getcustomasset)
-	end or function(path)
-		return vainAssets[path] or ''
+	getvainasset = function(path)
+		-- Prefer Roblox-hosted assets so loading cannot hang on local file downloads.
+		if vainAssets[path] then
+			return vainAssets[path]
+		end
+		if not inputService.TouchEnabled and getcustomasset then
+			return downloadFile(path, getcustomasset)
+		end
+		return ''
 	end
 end
 
