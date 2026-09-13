@@ -1518,7 +1518,7 @@ run(function()
 				repeat
 					local doAttack
 					if not bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then
-						if entitylib.isAlive and store.hand.toolType == 'sword' and bedwars.DaoController.chargingMaid == nil then
+						if entitylib.isAlive and store.hand and store.hand.tool and store.hand.toolType == 'sword' and bedwars.DaoController and bedwars.DaoController.chargingMaid == nil and bedwars.ItemMeta and bedwars.ItemMeta[store.hand.tool.Name] and bedwars.ItemMeta[store.hand.tool.Name].sword then
 							local attackRange = bedwars.ItemMeta[store.hand.tool.Name].sword.attackRange
 							rayParams.FilterDescendantsInstances = {lplr.Character}
 	
