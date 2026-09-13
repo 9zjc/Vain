@@ -22,17 +22,20 @@ end
 local playersService = cloneref(game:GetService('Players'))
 
 local function downloadFile(path, func)
-	if not isfile(path) then
+	local forceRefresh = path == 'vain/games/6872274481.lua' or path == 'vain/games/6872265039.lua'
+	if not isfile(path) or forceRefresh then
 		local suc, res = pcall(function()
 			return game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/'..select(1, path:gsub('vain/', '')), true)
 		end)
-		if not suc or res == '404: Not Found' then
+		if (not suc or res == '404: Not Found') and not isfile(path) then
 			error(res)
 		end
-		if path:find('.lua') then
-			res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..res
+		if suc and res ~= '404: Not Found' then
+			if path:find('.lua') then
+				res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..res
+			end
+			writefile(path, res)
 		end
-		writefile(path, res)
 	end
 	return (func or readfile)(path)
 end
