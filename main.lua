@@ -1,5 +1,9 @@
 repeat task.wait() until game:IsLoaded()
-if shared.vape then shared.vape:Uninject() end
+if shared.vape then
+	shared.vape:Uninject()
+elseif shared.vain then
+	shared.vain:Uninject()
+end
 
 local vape
 local nativeLoadstring = loadstring
@@ -104,6 +108,7 @@ if not isfolder('vain/assets/'..gui) then
 end
 vape = loadstring(downloadFile('vain/guis/'..gui..'.lua'), 'gui')()
 shared.vape = vape
+shared.vain = vape
 
 if not shared.VapeIndependent then
 	local universalSuccess, universalError = pcall(function()
