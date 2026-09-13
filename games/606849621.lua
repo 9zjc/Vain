@@ -1,5 +1,6 @@
+local nativeLoadstring = loadstring
 local loadstring = function(...)
-	local res, err = loadstring(...)
+	local res, err = nativeLoadstring(...)
 	if err and vape then vape:CreateNotification('Vain', 'Failed to load : '..err, 30, 'alert') end
 	return res
 end
