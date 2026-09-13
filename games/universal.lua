@@ -1,7 +1,7 @@
 local loadstring = function(...)
 	local res, err = loadstring(...)
-	if err and vape then
-		vape:CreateNotification('Vain', 'Failed to load : '..err, 30, 'alert')
+	if err and vain then
+		vain:CreateNotification('Vain', 'Failed to load : '..err, 30, 'alert')
 	end
 	return res
 end
@@ -20,7 +20,7 @@ local function downloadFile(path, func)
 			error(res)
 		end
 		if path:find('.lua') then
-			res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..res
+			res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vain updates.\n'..res
 		end
 		writefile(path, res)
 	end
@@ -58,11 +58,11 @@ end
 local gameCamera = workspace.CurrentCamera or workspace:FindFirstChildWhichIsA('Camera')
 local lplr = playersService.LocalPlayer
 
-local vape = shared.vape
-local tween = vape.Libraries.tween
-local targetinfo = vape.Libraries.targetinfo
-local getfontbounds = vape.Libraries.getfontbounds
-local getvapeasset = vape.Libraries.getvapeasset
+local vain = shared.vain
+local tween = vain.Libraries.tween
+local targetinfo = vain.Libraries.targetinfo
+local getfontbounds = vain.Libraries.getfontbounds
+local getvainasset = vain.Libraries.getvainasset
 
 local TargetStrafeVector, SpiderShift, WaypointFolder
 local Spider = {Enabled = false}
@@ -74,7 +74,7 @@ local function addBlur(parent)
 	blur.Size = UDim2.new(1, 89, 1, 52)
 	blur.Position = UDim2.fromOffset(-48, -31)
 	blur.BackgroundTransparency = 1
-	blur.Image = getvapeasset('vain/assets/new/blur.png')
+	blur.Image = getvainasset('vain/assets/new/blur.png')
 	blur.ScaleType = Enum.ScaleType.Slice
 	blur.SliceCenter = Rect.new(52, 31, 261, 502)
 	blur.Parent = parent
@@ -96,10 +96,10 @@ local function calculateMoveVector(vec)
 end
 
 local function isFriend(plr, recolor)
-	if vape.Categories.Friends.Options['Use friends'].Enabled then
-		local friend = table.find(vape.Categories.Friends.ListEnabled, plr.Name) and true
+	if vain.Categories.Friends.Options['Use friends'].Enabled then
+		local friend = table.find(vain.Categories.Friends.ListEnabled, plr.Name) and true
 		if recolor then
-			friend = friend and vape.Categories.Friends.Options['Recolor visuals'].Enabled
+			friend = friend and vain.Categories.Friends.Options['Recolor visuals'].Enabled
 		end
 		return friend
 	end
@@ -107,7 +107,7 @@ local function isFriend(plr, recolor)
 end
 
 local function isTarget(plr)
-	return table.find(vape.Categories.Targets.ListEnabled, plr.Name) and true
+	return table.find(vain.Categories.Targets.ListEnabled, plr.Name) and true
 end
 
 local function canClick()
@@ -124,7 +124,7 @@ local function canClick()
 			return false
 		end
 	end
-	return (not vape.gui.ScaledGui.ClickGui.Visible) and (not inputService:GetFocusedTextBox())
+	return (not vain.gui.ScaledGui.ClickGui.Visible) and (not inputService:GetFocusedTextBox())
 end
 
 local function getTableSize(tab)
@@ -138,7 +138,7 @@ local function getTool()
 end
 
 local function notif(...)
-	return vape:CreateNotification(...)
+	return vain:CreateNotification(...)
 end
 
 local function removeTags(str)
@@ -158,13 +158,13 @@ end
 local visited, attempted, tpSwitch = {}, {}, false
 local cacheExpire, cache = tick()
 local function serverHop(pointer, filter)
-	visited = shared.vapeserverhoplist and shared.vapeserverhoplist:split('/') or {}
+	visited = shared.vainserverhoplist and shared.vainserverhoplist:split('/') or {}
 	if not table.find(visited, game.JobId) then
 		table.insert(visited, game.JobId)
 	end
 
 	if not pointer then
-		notif('Vape', 'Searching for an available server.', 2)
+		notif('Vain', 'Searching for an available server.', 2)
 	end
 
 	local success, httpdata = pcall(function()
@@ -178,7 +178,7 @@ local function serverHop(pointer, filter)
 				cacheExpire, cache = tick() + 60, httpdata
 				table.insert(attempted, v.id)
 
-				notif('Vape', 'Found! Teleporting.', 5)
+				notif('Vain', 'Found! Teleporting.', 5)
 				teleportService:TeleportToPlaceInstance(game.PlaceId, v.id)
 				return
 			end
@@ -187,17 +187,17 @@ local function serverHop(pointer, filter)
 		if data.nextPageCursor then
 			serverHop(data.nextPageCursor, filter)
 		else
-			notif('Vape', 'Failed to find an available server.', 5, 'warning')
+			notif('Vain', 'Failed to find an available server.', 5, 'warning')
 		end
 	else
-		notif('Vape', 'Failed to grab servers. ('..(data and data.errors[1].message or 'no data')..')', 5, 'warning')
+		notif('Vain', 'Failed to grab servers. ('..(data and data.errors[1].message or 'no data')..')', 5, 'warning')
 	end
 end
 
-vape:Clean(lplr.OnTeleport:Connect(function()
+vain:Clean(lplr.OnTeleport:Connect(function()
 	if not tpSwitch then
 		tpSwitch = true
-		queue_on_teleport("shared.vapeserverhoplist = '"..table.concat(visited, '/').."'\nshared.vapeserverhopprevious = '"..game.JobId.."'")
+		queue_on_teleport("shared.vainserverhoplist = '"..table.concat(visited, '/').."'\nshared.vainserverhopprevious = '"..game.JobId.."'")
 	end
 end))
 
@@ -251,11 +251,11 @@ local whitelist = {
 	localprio = 0,
 	said = {}
 }
-vape.Libraries.entity = entitylib
-vape.Libraries.whitelist = whitelist
-vape.Libraries.prediction = prediction
-vape.Libraries.hash = hash
-vape.Libraries.auraanims = {
+vain.Libraries.entity = entitylib
+vain.Libraries.whitelist = whitelist
+vain.Libraries.prediction = prediction
+vain.Libraries.hash = hash
+vain.Libraries.auraanims = {
 	Normal = {
 		{CFrame = CFrame.new(-0.17, -0.14, -0.12) * CFrame.Angles(math.rad(-53), math.rad(50), math.rad(-64)), Time = 0.1},
 		{CFrame = CFrame.new(-0.55, -0.59, -0.1) * CFrame.Angles(math.rad(-161), math.rad(54), math.rad(-6)), Time = 0.08},
@@ -364,7 +364,7 @@ run(function()
 		if entity.NPC then return true end
 		if isFriend(entity.Player) then return false end
 		if not select(2, whitelist:get(entity.Player)) then return false end
-		if vape.Settings.Modules.Options['Teams by server'].Enabled then
+		if vain.Settings.Modules.Options['Teams by server'].Enabled then
 			if not lplr.Team then return true end
 			if not entity.Player.Team then return true end
 			if entity.Player.Team ~= lplr.Team then return true end
@@ -375,21 +375,21 @@ run(function()
 
 	entitylib.getEntityColor = function(entity)
 		entity = entity.Player
-		if not (entity and vape.Settings.Modules.Options['Use team color'].Enabled) then return end
+		if not (entity and vain.Settings.Modules.Options['Use team color'].Enabled) then return end
 		if isFriend(entity, true) then
-			return Color3.fromHSV(vape.Categories.Friends.Options['Friends color'].Hue, vape.Categories.Friends.Options['Friends color'].Sat, vape.Categories.Friends.Options['Friends color'].Value)
+			return Color3.fromHSV(vain.Categories.Friends.Options['Friends color'].Hue, vain.Categories.Friends.Options['Friends color'].Sat, vain.Categories.Friends.Options['Friends color'].Value)
 		end
 		return tostring(entity.TeamColor) ~= 'White' and entity.TeamColor.Color or nil
 	end
 
-	vape:Clean(function()
+	vain:Clean(function()
 		entitylib.kill()
 		entitylib = nil
 	end)
-	vape:Clean(vape.Categories.Friends.Update.Event:Connect(function() entitylib.refresh() end))
-	vape:Clean(vape.Categories.Targets.Update.Event:Connect(function() entitylib.refresh() end))
-	vape:Clean(entitylib.Events.LocalAdded:Connect(updateVelocity))
-	vape:Clean(workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(function()
+	vain:Clean(vain.Categories.Friends.Update.Event:Connect(function() entitylib.refresh() end))
+	vain:Clean(vain.Categories.Targets.Update.Event:Connect(function() entitylib.refresh() end))
+	vain:Clean(entitylib.Events.LocalAdded:Connect(updateVelocity))
+	vain:Clean(workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(function()
 		gameCamera = workspace.CurrentCamera or workspace:FindFirstChildWhichIsA('Camera')
 	end))
 end)
@@ -461,9 +461,9 @@ run(function()
 			self:hook()
 
 			if self.localprio == 0 then
-				olduninject = vape.Uninject
-				vape.Uninject = function()
-					notif('Vape', 'No escaping the private members :)', 10)
+				olduninject = vain.Uninject
+				vain.Uninject = function()
+					notif('Vain', 'No escaping the private members :)', 10)
 				end
 			end
 		end
@@ -518,7 +518,7 @@ run(function()
 			return oldchat(data, ...)
 		end)
 
-		vape:Clean(function()
+		vain:Clean(function()
 			hookfunction(func, oldchat)
 		end)
 	end
@@ -531,7 +531,7 @@ run(function()
 			if getcallbackvalue and restorefunction and hookfunction then
 				local old
 				task.spawn(function()
-					vape:Clean(function()
+					vain:Clean(function()
 						if old then
 							restorefunction(old)
 							old = nil
@@ -569,7 +569,7 @@ run(function()
 						end
 
 						task.wait(0.1)
-					until vape.Loaded == nil
+					until vain.Loaded == nil
 				end)
 			end
 		elseif replicatedStorage:FindFirstChild('DefaultChatSystemChatEvents') then
@@ -652,7 +652,7 @@ run(function()
 		if success then
 			return sendToast({
 				toastTitle = text,
-				iconImage = getvapeasset('vain/assets/new/vape.png'),
+				iconImage = getvainasset('vain/assets/new/vape.png'),
 				swipeUpDismiss = true,
 				onActivated = function() end
 			})
@@ -664,7 +664,7 @@ run(function()
 		container.AnchorPoint = Vector2.new(0.5, 0)
 		container.BackgroundTransparency = 1
 		container.Text = ''
-		container.Parent = vape.gui
+		container.Parent = vain.gui
 		local constraint = Instance.new('UISizeConstraint')
 		constraint.MinSize = Vector2.new(24, 60)
 		constraint.MaxSize = Vector2.new(600, math.huge)
@@ -723,7 +723,7 @@ run(function()
 		iconframe.Parent = mainframe
 		local icon = Instance.new('ImageLabel')
 		icon.Size = UDim2.fromOffset(36, 36)
-		icon.Image = getvapeasset('vain/assets/new/vape.png')
+		icon.Image = getvainasset('vain/assets/new/vape.png')
 		icon.BackgroundTransparency = 1
 		icon.Parent = iconframe
 		constraint.MaxSize = Vector2.new(math.max(getfontbounds(text, 20, textlabel.FontFace).X + 80, 600), math.huge)
@@ -733,7 +733,7 @@ run(function()
 		})
 
 		task.delay(20, function()
-			if vape.Loaded ~= nil then
+			if vain.Loaded ~= nil then
 				tween:Tween(container, TweenInfo.new(0.3), {
 					Position = UDim2.new(0.5, 0, 0, -60)
 				})
@@ -781,14 +781,14 @@ run(function()
 				whitelist.connection = playersService.PlayerAdded:Connect(function(v)
 					whitelist:playeradded(v, true)
 				end)
-				vape:Clean(whitelist.connection)
+				vain:Clean(whitelist.connection)
 			end
 
 			for _, v in playersService:GetPlayers() do
 				whitelist:playeradded(v)
 			end
 
-			if entitylib.Running and vape.Loaded then
+			if entitylib.Running and vain.Loaded then
 				entitylib.refresh()
 			end
 
@@ -807,8 +807,8 @@ run(function()
 				end)
 			end
 
-			if whitelist.data.KillVape then
-				vape:Uninject()
+			if whitelist.data.KillVain then
+				vain:Uninject()
 				return true
 			end
 
@@ -880,13 +880,13 @@ run(function()
 		toggle = function(args)
 			if #args < 1 then return end
 			if args[1]:lower() == 'all' then
-				for i, v in vape.Modules do
+				for i, v in vain.Modules do
 					if i ~= 'Panic' and i ~= 'ServerHop' and i ~= 'Rejoin' then
 						v:Toggle()
 					end
 				end
 			else
-				for i, v in vape.Modules do
+				for i, v in vain.Modules do
 					if i:lower() == args[1]:lower() then
 						v:Toggle()
 						break
@@ -905,12 +905,12 @@ run(function()
 		end,
 		uninject = function()
 			if olduninject then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
-				olduninject(vape)
+				olduninject(vain)
 			else
-				vape:Uninject()
+				vain:Uninject()
 			end
 		end,
 		void = function()
@@ -927,10 +927,10 @@ run(function()
 			end
 
 			task.wait(10)
-		until vape.Loaded == nil
+		until vain.Loaded == nil
 	end)
 
-	vape:Clean(function()
+	vain:Clean(function()
 		table.clear(whitelist.commands)
 		table.clear(whitelist.data)
 		table.clear(whitelist)
@@ -959,7 +959,7 @@ run(function()
 		return num
 	end
 	
-	AimAssist = vape.Categories.Combat:CreateModule({
+	AimAssist = vain.Categories.Combat:CreateModule({
 		Name = 'AimAssist',
 		Function = function(callback)
 			if CircleObject then
@@ -974,7 +974,7 @@ run(function()
 						CircleObject.Position = inputService:GetMouseLocation()
 					end
 	
-					if rightClicked and not vape.gui.ScaledGui.ClickGui.Visible then
+					if rightClicked and not vain.gui.ScaledGui.ClickGui.Visible then
 						ent = entitylib.EntityMouse({
 							Range = FOV.Value,
 							Part = Part.Value,
@@ -1052,7 +1052,7 @@ run(function()
 				CircleObject = Drawing.new('Circle')
 				CircleObject.Filled = CircleFilled.Enabled
 				CircleObject.Color = Color3.fromHSV(CircleColor.Hue, CircleColor.Sat, CircleColor.Value)
-				CircleObject.Position = vape.gui.AbsoluteSize / 2
+				CircleObject.Position = vain.gui.AbsoluteSize / 2
 				CircleObject.Radius = FOV.Value
 				CircleObject.NumSides = 100
 				CircleObject.Transparency = 1 - CircleTransparency.Value
@@ -1121,7 +1121,7 @@ run(function()
 	local Mode
 	local CPS
 	
-	AutoClicker = vape.Categories.Combat:CreateModule({
+	AutoClicker = vain.Categories.Combat:CreateModule({
 		Name = 'AutoClicker',
 		Function = function(callback)
 			if callback then
@@ -1133,7 +1133,7 @@ run(function()
 						end
 					else
 						if mouse1click and (isrbxactive or iswindowactive)() then
-							if not vape.gui.ScaledGui.ClickGui.Visible then
+							if not vain.gui.ScaledGui.ClickGui.Visible then
 								(Mode.Value == 'Click' and mouse1click or mouse2click)()
 							end
 						end
@@ -1169,7 +1169,7 @@ run(function()
 	Overlay.FilterType = Enum.RaycastFilterType.Include
 	local modified = {}
 	
-	Reach = vape.Categories.Combat:CreateModule({
+	Reach = vain.Categories.Combat:CreateModule({
 		Name = 'Reach',
 		Function = function(callback)
 			if callback then
@@ -1438,7 +1438,7 @@ run(function()
 	Hooks.ViewportPointToRay = table.clone(Hooks.ScreenPointToRay)
 	Hooks.ViewportPointToRay.Hook = Instance.new('Camera').ViewportPointToRay
 
-	SilentAim = vape.Categories.Combat:CreateModule({
+	SilentAim = vain.Categories.Combat:CreateModule({
 		Name = 'SilentAim',
 		Function = function(callback)
 			if CircleObject then
@@ -1676,7 +1676,7 @@ run(function()
 				CircleObject = Drawing.new('Circle')
 				CircleObject.Filled = CircleFilled.Enabled
 				CircleObject.Color = Color3.fromHSV(CircleColor.Hue, CircleColor.Sat, CircleColor.Value)
-				CircleObject.Position = vape.gui.AbsoluteSize / 2
+				CircleObject.Position = vain.gui.AbsoluteSize / 2
 				CircleObject.Radius = Range.Value
 				CircleObject.NumSides = 100
 				CircleObject.Transparency = 1 - CircleTransparency.Value
@@ -1776,7 +1776,7 @@ run(function()
 		end
 	end
 	
-	TriggerBot = vape.Categories.Combat:CreateModule({
+	TriggerBot = vain.Categories.Combat:CreateModule({
 		Name = 'TriggerBot',
 		Function = function(callback)
 			if callback then
@@ -1851,7 +1851,7 @@ run(function()
 	rayCheck.RespectCanCollide = true
 	local part
 	
-	AntiFall = vape.Categories.Blatant:CreateModule({
+	AntiFall = vain.Categories.Blatant:CreateModule({
 		Name = 'AntiFall',
 		Function = function(callback)
 			if callback then
@@ -2074,7 +2074,7 @@ run(function()
 		end
 	}
 
-	Fly = vape.Categories.Blatant:CreateModule({
+	Fly = vain.Categories.Blatant:CreateModule({
 		Name = 'Fly',
 		Function = function(callback)
 			if Platform then
@@ -2386,7 +2386,7 @@ run(function()
 		end
 	end
 	
-	HighJump = vape.Categories.Blatant:CreateModule({
+	HighJump = vain.Categories.Blatant:CreateModule({
 		Name = 'HighJump',
 		Function = function(callback)
 			if callback then
@@ -2434,7 +2434,7 @@ run(function()
 	local Expand
 	local modified = {}
 	
-	HitBoxes = vape.Categories.Blatant:CreateModule({
+	HitBoxes = vain.Categories.Blatant:CreateModule({
 		Name = 'HitBoxes',
 		Function = function(callback)
 			if callback then
@@ -2503,7 +2503,7 @@ run(function()
 		end
 	end
 	
-	Invisible = vape.Categories.Blatant:CreateModule({
+	Invisible = vain.Categories.Blatant:CreateModule({
 		Name = 'Invisible',
 		Function = function(callback)
 			if callback then
@@ -2562,7 +2562,7 @@ run(function()
 	local params = RaycastParams.new()
 	params.FilterType = Enum.RaycastFilterType.Include
 	
-	Jesus = vape.Categories.Blatant:CreateModule({
+	Jesus = vain.Categories.Blatant:CreateModule({
 		Name = 'Jesus',
 		Function = function(callback)
 			if callback then
@@ -2624,7 +2624,7 @@ run(function()
 		return tool and tool:FindFirstChildWhichIsA('TouchTransmitter', true) or nil, tool
 	end
 	
-	Killaura = vape.Categories.Blatant:CreateModule({
+	Killaura = vain.Categories.Blatant:CreateModule({
 		Name = 'Killaura',
 		Function = function(callback)
 			if callback then
@@ -2773,7 +2773,7 @@ run(function()
 					box.CFrame = CFrame.new(0, -0.5, 0)
 					box.Size = Vector3.new(3, 5, 3)
 					box.ZIndex = 0
-					box.Parent = vape.holder
+					box.Parent = vain.holder
 					Boxes[i] = box
 				end
 			else
@@ -2901,7 +2901,7 @@ run(function()
 	local Value
 	local AutoDisable
 	
-	LongJump = vape.Categories.Blatant:CreateModule({
+	LongJump = vain.Categories.Blatant:CreateModule({
 		Name = 'LongJump',
 		Function = function(callback)
 			if callback then
@@ -2988,7 +2988,7 @@ run(function()
 		return obj
 	end
 	
-	MouseTP = vape.Categories.Blatant:CreateModule({
+	MouseTP = vain.Categories.Blatant:CreateModule({
 		Name = 'MouseTP',
 		Function = function(callback)
 			if callback then
@@ -3175,7 +3175,7 @@ run(function()
 	}
 	Functions.Motor = Functions.CFrame
 	
-	Phase = vape.Categories.Blatant:CreateModule({
+	Phase = vain.Categories.Blatant:CreateModule({
 		Name = 'Phase',
 		Function = function(callback)
 			if callback then
@@ -3243,7 +3243,7 @@ run(function()
 	local CustomProperties
 	local w, s, a, d = 0, 0, 0, 0
 	
-	Speed = vape.Categories.Blatant:CreateModule({
+	Speed = vain.Categories.Blatant:CreateModule({
 		Name = 'Speed',
 		Function = function(callback)
 			frictionTable.Speed = callback and CustomProperties.Enabled or nil
@@ -3411,7 +3411,7 @@ run(function()
 	rayCheck.RespectCanCollide = true
 	local Active, Truss
 	
-	Spider = vape.Categories.Blatant:CreateModule({
+	Spider = vain.Categories.Blatant:CreateModule({
 		Name = 'Spider',
 		Function = function(callback)
 			if callback then
@@ -3519,7 +3519,7 @@ run(function()
 	local Value
 	local AngularVelocity
 	
-	SpinBot = vape.Categories.Blatant:CreateModule({
+	SpinBot = vain.Categories.Blatant:CreateModule({
 		Name = 'SpinBot',
 		Function = function(callback)
 			if callback then
@@ -3596,7 +3596,7 @@ run(function()
 	local terrain = cloneref(workspace:FindFirstChildWhichIsA('Terrain'))
 	local lastpos = Region3.new(Vector3.zero, Vector3.zero)
 	
-	Swim = vape.Categories.Blatant:CreateModule({
+	Swim = vain.Categories.Blatant:CreateModule({
 		Name = 'Swim',
 		Function = function(callback)
 			if callback then
@@ -3637,7 +3637,7 @@ run(function()
 	rayCheck.RespectCanCollide = true
 	local module, old
 	
-	TargetStrafe = vape.Categories.Blatant:CreateModule({
+	TargetStrafe = vain.Categories.Blatant:CreateModule({
 		Name = 'TargetStrafe',
 		Function = function(callback)
 			if callback then
@@ -3649,7 +3649,7 @@ run(function()
 				end
 	
 				old = module.moveFunction
-				local flymod, ang, oldent = vape.Modules.Fly or {Enabled = false}
+				local flymod, ang, oldent = vain.Modules.Fly or {Enabled = false}
 				module.moveFunction = function(self, vec, face)
 					local wallcheck = Targets.Walls.Enabled
 					local ent = not inputService:IsKeyDown(Enum.KeyCode.S) and entitylib.EntityPosition({
@@ -3752,7 +3752,7 @@ run(function()
 	local Timer
 	local Value
 	
-	Timer = vape.Categories.Blatant:CreateModule({
+	Timer = vain.Categories.Blatant:CreateModule({
 		Name = 'Timer',
 		Function = function(callback)
 			if callback then
@@ -3784,13 +3784,13 @@ run(function()
 	local DistanceLimit
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vape.gui
+	Folder.Parent = vain.gui
 	
 	local function Added(ent)
 		if not Targets.Players.Enabled and ent.Player then return end
 		if not Targets.NPCs.Enabled and ent.NPC then return end
 		if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) and (not ent.Friend) then return end
-		if vape.ThreadFix then
+		if vain.ThreadFix then
 			setthreadidentity(8)
 		end
 	
@@ -3801,7 +3801,7 @@ run(function()
 		arrow.BackgroundTransparency = 1
 		arrow.BorderSizePixel = 0
 		arrow.Visible = false
-		arrow.Image = getvapeasset('vain/assets/new/arrow.png')
+		arrow.Image = getvainasset('vain/assets/new/arrow.png')
 		arrow.ImageColor3 = entitylib.getEntityColor(ent) or Color3.fromHSV(Color.Hue, Color.Sat, Color.Value)
 		arrow.Parent = Folder
 		Reference[ent] = arrow
@@ -3810,7 +3810,7 @@ run(function()
 	local function Removed(ent)
 		local v = Reference[ent]
 		if v then
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 	
@@ -3845,7 +3845,7 @@ run(function()
 		end
 	end
 	
-	Arrows = vape.Categories.Render:CreateModule({
+	Arrows = vain.Categories.Render:CreateModule({
 		Name = 'Arrows',
 		Function = function(callback)
 			if callback then
@@ -3858,7 +3858,7 @@ run(function()
 					if Reference[ent] then Removed(ent) end
 					Added(ent)
 				end))
-				Arrows:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
+				Arrows:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
 					ColorFunc(Color.Hue, Color.Sat, Color.Value)
 				end))
 				Arrows:Clean(runService.RenderStepped:Connect(Loop))
@@ -3927,13 +3927,13 @@ run(function()
 	local Walls
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vape.holder
+	Folder.Parent = vain.holder
 	
 	local function Added(ent)
 		if not Targets.Players.Enabled and ent.Player then return end
 		if not Targets.NPCs.Enabled and ent.NPC then return end
 		if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) then return end
-		if vape.ThreadFix then
+		if vain.ThreadFix then
 			setthreadidentity(8)
 		end
 	
@@ -3972,7 +3972,7 @@ run(function()
 	
 	local function Removed(ent)
 		if Reference[ent] then
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 			if type(Reference[ent]) == 'table' then
@@ -3987,7 +3987,7 @@ run(function()
 		end
 	end
 	
-	Chams = vape.Categories.Render:CreateModule({
+	Chams = vain.Categories.Render:CreateModule({
 		Name = 'Chams',
 		Function = function(callback)
 			if callback then
@@ -3998,7 +3998,7 @@ run(function()
 					end
 					Added(ent)
 				end))
-				Chams:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
+				Chams:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
 					for i, v in Reference do
 						local color = entitylib.getEntityColor(i) or Color3.fromHSV(FillColor.Hue, FillColor.Sat, FillColor.Value)
 						if type(v) == 'table' then
@@ -4155,7 +4155,7 @@ run(function()
 			if not Targets.Players.Enabled and ent.Player then return end
 			if not Targets.NPCs.Enabled and ent.NPC then return end
 			if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) then return end
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 			local EntityESP = {}
@@ -4221,7 +4221,7 @@ run(function()
 			if not Targets.Players.Enabled and ent.Player then return end
 			if not Targets.NPCs.Enabled and ent.NPC then return end
 			if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) then return end
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 			local EntityESP = {}
@@ -4250,7 +4250,7 @@ run(function()
 			if not Targets.Players.Enabled and ent.Player then return end
 			if not Targets.NPCs.Enabled and ent.NPC then return end
 			if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) then return end
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 			local EntityESP = {}
@@ -4278,7 +4278,7 @@ run(function()
 		Drawing2D = function(ent)
 			local EntityESP = Reference[ent]
 			if EntityESP then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 				Reference[ent] = nil
@@ -4298,7 +4298,7 @@ run(function()
 		Drawing2D = function(ent)
 			local EntityESP = Reference[ent]
 			if EntityESP then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 				
@@ -4495,7 +4495,7 @@ run(function()
 		end
 	}
 	
-	ESP = vape.Categories.Render:CreateModule({
+	ESP = vain.Categories.Render:CreateModule({
 		Name = 'ESP',
 		Function = function(callback)
 			if callback then
@@ -4524,7 +4524,7 @@ run(function()
 					end
 				end
 				if ColorFunc[methodused] then
-					ESP:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
+					ESP:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
 						ColorFunc[methodused](Color.Hue, Color.Sat, Color.Value)
 					end))
 				end
@@ -4685,7 +4685,7 @@ run(function()
 		flag = false
 	end
 	
-	Fullbright = vape.Categories.Render:CreateModule({
+	Fullbright = vain.Categories.Render:CreateModule({
 		Name = 'Fullbright',
 		Function = function(callback)
 			if callback then
@@ -4743,11 +4743,11 @@ run(function()
 	local chairanim
 	local chair
 	
-	GamingChair = vape.Categories.Render:CreateModule({
+	GamingChair = vain.Categories.Render:CreateModule({
 		Name = 'GamingChair',
 		Function = function(callback)
 			if callback then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 	
@@ -4760,12 +4760,12 @@ run(function()
 				chair.Material = Enum.Material.SmoothPlastic
 				chair.Parent = workspace
 				movingsound = Instance.new('Sound')
-				--movingsound.SoundId = downloadVapeAsset('vape/assets/ChairRolling.mp3')
+				--movingsound.SoundId = downloadVainAsset('vain/assets/ChairRolling.mp3')
 				movingsound.Volume = 0.4
 				movingsound.Looped = true
 				movingsound.Parent = workspace
 				flyingsound = Instance.new('Sound')
-				--flyingsound.SoundId = downloadVapeAsset('vape/assets/ChairFlying.mp3')
+				--flyingsound.SoundId = downloadVainAsset('vain/assets/ChairFlying.mp3')
 				flyingsound.Volume = 0.4
 				flyingsound.Looped = true
 				flyingsound.Parent = workspace
@@ -4857,7 +4857,7 @@ run(function()
 						chairfan.Velocity = Vector3.zero
 						chairfan.CFrame = chair.CFrame * CFrame.new(0.047, -1.873, 0) * CFrame.Angles(0, math.rad(tick() * 180 % 360), math.rad(180))
 						local moving = entitylib.character.Humanoid:GetState() == Enum.HumanoidStateType.Running and entitylib.character.Humanoid.MoveDirection ~= Vector3.zero
-						local flying = vape.Modules.Fly and vape.Modules.Fly.Enabled or vape.Modules.LongJump and vape.Modules.LongJump.Enabled or vape.Modules.InfiniteFly and vape.Modules.InfiniteFly.Enabled
+						local flying = vain.Modules.Fly and vain.Modules.Fly.Enabled or vain.Modules.LongJump and vain.Modules.LongJump.Enabled or vain.Modules.InfiniteFly and vain.Modules.InfiniteFly.Enabled
 						if movingsound.TimePosition > 1.9 then
 							movingsound.TimePosition = 0.2
 						end
@@ -4976,7 +4976,7 @@ end)
 run(function()
 	local Health
 	
-	Health = vape.Categories.Render:CreateModule({
+	Health = vain.Categories.Render:CreateModule({
 		Name = 'Health',
 		Function = function(callback)
 			if callback then
@@ -4988,7 +4988,7 @@ run(function()
 				label.Text = '100 ❤️'
 				label.TextSize = 18
 				label.Font = Enum.Font.Arial
-				label.Parent = vape.gui
+				label.Parent = vain.gui
 				Health:Clean(label)
 				
 				repeat
@@ -5019,7 +5019,7 @@ run(function()
 	local DistanceLimit
 	local Strings, Sizes, Reference = {}, {}, {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vape.gui
+	Folder.Parent = vain.gui
 	local methodused
 	
 	local Added = {
@@ -5027,7 +5027,7 @@ run(function()
 			if not Targets.Players.Enabled and ent.Player then return end
 			if not Targets.NPCs.Enabled and ent.NPC then return end
 			if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) then return end
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 	
@@ -5096,7 +5096,7 @@ run(function()
 		Normal = function(ent)
 			local v = Reference[ent]
 			if v then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 				Reference[ent] = nil
@@ -5108,7 +5108,7 @@ run(function()
 		Drawing = function(ent)
 			local v = Reference[ent]
 			if v then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 				Reference[ent] = nil
@@ -5128,7 +5128,7 @@ run(function()
 		Normal = function(ent)
 			local nametag = Reference[ent]
 			if nametag then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 				Sizes[ent] = nil
@@ -5151,7 +5151,7 @@ run(function()
 		Drawing = function(ent)
 			local nametag = Reference[ent]
 			if nametag then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 				Sizes[ent] = nil
@@ -5250,7 +5250,7 @@ run(function()
 		end
 	}
 	
-	NameTags = vape.Categories.Render:CreateModule({
+	NameTags = vain.Categories.Render:CreateModule({
 		Name = 'NameTags',
 		Function = function(callback)
 			if callback then
@@ -5279,7 +5279,7 @@ run(function()
 					end
 				end
 				if ColorFunc[methodused] then
-					NameTags:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
+					NameTags:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
 						ColorFunc[methodused](Color.Hue, Color.Sat, Color.Value)
 					end))
 				end
@@ -5437,7 +5437,7 @@ run(function()
 	local models = {}
 	
 	local function addMesh(ent)
-		if vape.ThreadFix then 
+		if vain.ThreadFix then 
 			setthreadidentity(8)
 		end
 		local root = ent.RootPart
@@ -5467,7 +5467,7 @@ run(function()
 		end
 	end
 	
-	PlayerModel = vape.Categories.Render:CreateModule({
+	PlayerModel = vain.Categories.Render:CreateModule({
 		Name = 'PlayerModel',
 		Function = function(callback)
 			if callback then 
@@ -5561,7 +5561,7 @@ run(function()
 		if not Targets.Players.Enabled and ent.Player then return end
 		if not Targets.NPCs.Enabled and ent.NPC then return end
 		if (not ent.Targetable) and (not ent.Friend) then return end
-		if vape.ThreadFix then
+		if vain.ThreadFix then
 			setthreadidentity(8)
 		end
 	
@@ -5584,7 +5584,7 @@ run(function()
 	local function Removed(ent)
 		local v = Reference[ent]
 		if v then
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 			Reference[ent] = nil
@@ -5592,9 +5592,9 @@ run(function()
 		end
 	end
 	
-	Radar = vape:CreateOverlay({
+	Radar = vain:CreateOverlay({
 		Name = 'Radar',
-		Icon = getvapeasset('vain/assets/new/radar.png'),
+		Icon = getvainasset('vain/assets/new/radar.png'),
 		Size = UDim2.fromOffset(14, 14),
 		Position = UDim2.fromOffset(12, 13),
 		Function = function(callback)
@@ -5612,7 +5612,7 @@ run(function()
 					end
 					Added(ent)
 				end))
-				Radar:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
+				Radar:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
 					for ent, dot in Reference do
 						dot.BackgroundColor3 = entitylib.getEntityColor(ent) or Color3.fromHSV(PlayerColor.Hue, PlayerColor.Sat, PlayerColor.Value)
 					end
@@ -5729,7 +5729,7 @@ run(function()
 	local FillTransparency
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vape.holder
+	Folder.Parent = vain.holder
 	
 	local function Add(v)
 		if not table.find(List.ListEnabled, v.Name) then return end
@@ -5747,7 +5747,7 @@ run(function()
 		end
 	end
 	
-	Search = vape.Categories.Render:CreateModule({
+	Search = vain.Categories.Render:CreateModule({
 		Name = 'Search',
 		Function = function(callback)
 			if callback then
@@ -5813,9 +5813,9 @@ run(function()
 	local infolabel
 	local infostroke
 	
-	SessionInfo = vape:CreateOverlay({
+	SessionInfo = vain:CreateOverlay({
 		Name = 'Session Info',
-		Icon = getvapeasset('vain/assets/new/textgui.png'),
+		Icon = getvainasset('vain/assets/new/textgui.png'),
 		Size = UDim2.fromOffset(16, 12),
 		Position = UDim2.fromOffset(12, 14),
 		Function = function(callback)
@@ -5824,26 +5824,26 @@ run(function()
 				SessionInfo:Clean(playersService.LocalPlayer.OnTeleport:Connect(function()
 					if not teleportedServers then
 						teleportedServers = true
-						queue_on_teleport("shared.vapesessioninfo = '"..httpService:JSONEncode(vape.Libraries.sessioninfo.Objects).."'")
+						queue_on_teleport("shared.vainsessioninfo = '"..httpService:JSONEncode(vain.Libraries.sessioninfo.Objects).."'")
 					end
 				end))
 	
-				if shared.vapesessioninfo then
-					for i, v in httpService:JSONDecode(shared.vapesessioninfo) do
-						if vape.Libraries.sessioninfo.Objects[i] and v.Saved then
-							vape.Libraries.sessioninfo.Objects[i].Value = v.Value
+				if shared.vainsessioninfo then
+					for i, v in httpService:JSONDecode(shared.vainsessioninfo) do
+						if vain.Libraries.sessioninfo.Objects[i] and v.Saved then
+							vain.Libraries.sessioninfo.Objects[i].Value = v.Value
 						end
 					end
 				end
 	
 				repeat
-					if vape.Libraries.sessioninfo then
+					if vain.Libraries.sessioninfo then
 						local stuff = {''}
 						if Title.Enabled then
 							stuff[1] = TitleOffset.Enabled and '<b>Session Info</b>\n<font size="4"> </font>' or '<b>Session Info</b>'
 						end
 	
-						for i, v in vape.Libraries.sessioninfo.Objects do
+						for i, v in vain.Libraries.sessioninfo.Objects do
 							stuff[v.Index] = not table.find(Hide.ListEnabled, i) and i..': '..v.Function(v.Value) or false
 						end
 	
@@ -5947,11 +5947,11 @@ run(function()
 	infoholder.BackgroundColor3 = Color3.new()
 	infoholder.BackgroundTransparency = 0.5
 	infoholder.Parent = SessionInfo.Children
-	vape:Clean(SessionInfo.Children:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
-		if vape.ThreadFix then
+	vain:Clean(SessionInfo.Children:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
+		if vain.ThreadFix then
 			setthreadidentity(8)
 		end
-		local newside = SessionInfo.Children.AbsolutePosition.X > (vape.gui.AbsoluteSize.X / 2)
+		local newside = SessionInfo.Children.AbsolutePosition.X > (vain.gui.AbsoluteSize.X / 2)
 		infoholder.Position = UDim2.fromScale(newside and 1 or 0, 0)
 		infoholder.AnchorPoint = Vector2.new(newside and 1 or 0, 0)
 	end))
@@ -5976,7 +5976,7 @@ run(function()
 	infostroke.Color = Color3.fromHSV(0.44, 1, 1)
 	infostroke.Parent = infoholder
 	addBlur(infoholder)
-	vape.Libraries.sessioninfo = {
+	vain.Libraries.sessioninfo = {
 		Objects = {},
 		AddItem = function(self, name, startvalue, func, saved)
 			func, saved = func or function(val) return val end, saved == nil or saved
@@ -5991,7 +5991,7 @@ run(function()
 			}
 		end
 	}
-	vape.Libraries.sessioninfo:AddItem('Time Played', os.clock(), function(value)
+	vain.Libraries.sessioninfo:AddItem('Time Played', os.clock(), function(value)
 		return os.date('!%X', math.floor(os.clock() - value))
 	end)
 end)
@@ -6038,9 +6038,9 @@ run(function()
 		return corner
 	end
 	
-	Spotify = vape:CreateOverlay({
+	Spotify = vain:CreateOverlay({
 		Name = 'Spotify',
-		Icon = getvapeasset('vain/assets/new/spotify.png'),
+		Icon = getvainasset('vain/assets/new/spotify.png'),
 		Size = UDim2.fromOffset(16, 16),
 		Position = UDim2.fromOffset(12, 13),
 		Function = function(callback)
@@ -6658,7 +6658,7 @@ run(function()
 		if not Targets.Players.Enabled and ent.Player then return end
 		if not Targets.NPCs.Enabled and ent.NPC then return end
 		if Teammates.Enabled and (not ent.Targetable) and (not ent.Friend) then return end
-		if vape.ThreadFix then
+		if vain.ThreadFix then
 			setthreadidentity(8)
 		end
 	
@@ -6672,7 +6672,7 @@ run(function()
 	local function Removed(ent)
 		local v = Reference[ent]
 		if v then
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 			Reference[ent] = nil
@@ -6692,7 +6692,7 @@ run(function()
 	end
 	
 	local function Loop()
-		local screenSize = vape.gui.AbsoluteSize
+		local screenSize = vain.gui.AbsoluteSize
 		local startVector = StartPosition.Value == 'Mouse' and inputService:GetMouseLocation() or Vector2.new(screenSize.X / 2, (StartPosition.Value == 'Middle' and screenSize.Y / 2 or screenSize.Y))
 	
 		for ent, EntityTracer in Reference do
@@ -6723,7 +6723,7 @@ run(function()
 		end
 	end
 	
-	Tracers = vape.Categories.Render:CreateModule({
+	Tracers = vain.Categories.Render:CreateModule({
 		Name = 'Tracers',
 		Function = function(callback)
 			if callback then
@@ -6740,7 +6740,7 @@ run(function()
 					end
 					Added(ent)
 				end))
-				Tracers:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
+				Tracers:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
 					ColorFunc(Color.Hue, Color.Sat, Color.Value)
 				end))
 				Tracers:Clean(runService.RenderStepped:Connect(Loop))
@@ -6850,9 +6850,9 @@ run(function()
 	local Background
 	local Stroke
 	WaypointFolder = Instance.new('Folder')
-	WaypointFolder.Parent = vape.holder
+	WaypointFolder.Parent = vain.holder
 	
-	Waypoints = vape.Categories.Render:CreateModule({
+	Waypoints = vain.Categories.Render:CreateModule({
 		Name = 'Waypoints',
 		Function = function(callback)
 			if callback then
@@ -6994,7 +6994,7 @@ run(function()
 		end
 	end
 	
-	AnimationPlayer = vape.Categories.Utility:CreateModule({
+	AnimationPlayer = vain.Categories.Utility:CreateModule({
 		Name = 'AnimationPlayer',
 		Function = function(callback)
 			if callback then
@@ -7069,7 +7069,7 @@ end)
 run(function()
 	local AntiRagdoll
 	
-	AntiRagdoll = vape.Categories.Utility:CreateModule({
+	AntiRagdoll = vain.Categories.Utility:CreateModule({
 		Name = 'AntiRagdoll',
 		Function = function(callback)
 			if entitylib.isAlive then
@@ -7090,7 +7090,7 @@ run(function()
 	local AutoRejoin
 	local Sort
 	
-	AutoRejoin = vape.Categories.Utility:CreateModule({
+	AutoRejoin = vain.Categories.Utility:CreateModule({
 		Name = 'AutoRejoin',
 		Function = function(callback)
 			if callback then
@@ -7119,7 +7119,7 @@ run(function()
 	local AutoSendLength
 	local oldphys, oldsend
 	
-	Blink = vape.Categories.Utility:CreateModule({
+	Blink = vain.Categories.Utility:CreateModule({
 		Name = 'Blink',
 		Function = function(callback)
 			if callback then
@@ -7188,7 +7188,7 @@ run(function()
 	local RandomList = {}
 	local oldchat
 	
-	ChatSpammer = vape.Categories.Utility:CreateModule({
+	ChatSpammer = vain.Categories.Utility:CreateModule({
 		Name = 'ChatSpammer',
 		Function = function(callback)
 			if callback then
@@ -7290,7 +7290,7 @@ run(function()
 		end
 	end
 	
-	Disabler = vape.Categories.Utility:CreateModule({
+	Disabler = vain.Categories.Utility:CreateModule({
 		Name = 'Disabler',
 		Function = function(callback)
 			if callback then
@@ -7305,11 +7305,11 @@ run(function()
 end)
 
 run(function()
-	vape.Categories.Utility:CreateModule({
+	vain.Categories.Utility:CreateModule({
 		Name = 'Panic',
 		Function = function(callback)
 			if callback then
-				for _, module in vape.Modules do
+				for _, module in vain.Modules do
 					if module.Enabled then
 						module:Toggle()
 					end
@@ -7323,7 +7323,7 @@ end)
 run(function()
 	local Rejoin
 	
-	Rejoin = vape.Categories.Utility:CreateModule({
+	Rejoin = vain.Categories.Utility:CreateModule({
 		Name = 'Rejoin',
 		Function = function(callback)
 			if callback then
@@ -7345,7 +7345,7 @@ run(function()
 	local ServerHop
 	local Sort
 	
-	ServerHop = vape.Categories.Utility:CreateModule({
+	ServerHop = vain.Categories.Utility:CreateModule({
 		Name = 'ServerHop',
 		Function = function(callback)
 			if callback then
@@ -7363,10 +7363,10 @@ run(function()
 	ServerHop:CreateButton({
 		Name = 'Rejoin Previous Server',
 		Function = function()
-			notif('ServerHop', shared.vapeserverhopprevious and 'Rejoining previous server...' or 'Cannot find previous server', 5)
+			notif('ServerHop', shared.vainserverhopprevious and 'Rejoining previous server...' or 'Cannot find previous server', 5)
 	
-			if shared.vapeserverhopprevious then
-				teleportService:TeleportToPlaceInstance(game.PlaceId, shared.vapeserverhopprevious)
+			if shared.vainserverhopprevious then
+				teleportService:TeleportToPlaceInstance(game.PlaceId, shared.vainserverhopprevious)
 			end
 		end
 	})
@@ -7403,8 +7403,8 @@ run(function()
 	end
 	
 	local function playerAdded(plr)
-		if not vape.Loaded then
-			repeat task.wait() until vape.Loaded
+		if not vain.Loaded then
+			repeat task.wait() until vain.Loaded
 		end
 	
 		local user = table.find(Users.ListEnabled, tostring(plr.UserId))
@@ -7414,7 +7414,7 @@ run(function()
 	
 			if Mode.Value == 'Uninject' then
 				task.spawn(function()
-					vape:Uninject()
+					vain:Uninject()
 				end)
 	
 				game:GetService('StarterGui'):SetCore('SendNotification', {
@@ -7425,14 +7425,14 @@ run(function()
 			elseif Mode.Value == 'ServerHop' then
 				serverHop()
 			elseif Mode.Value == 'Profile' then
-				vape.Save = function() end
-				if vape.Profile ~= Profile.Value then
-					vape.Profile = Profile.Value
-					vape:Load(true, Profile.Value)
+				vain.Save = function() end
+				if vain.Profile ~= Profile.Value then
+					vain.Profile = Profile.Value
+					vain:Load(true, Profile.Value)
 				end
 			elseif Mode.Value == 'AutoConfig' then
-				vape.Save = function() end
-				for _, module in vape.Modules do
+				vain.Save = function() end
+				for _, module in vain.Modules do
 					if module.Enabled then
 						module:Toggle()
 					end
@@ -7441,7 +7441,7 @@ run(function()
 		end
 	end
 	
-	StaffDetector = vape.Categories.Utility:CreateModule({
+	StaffDetector = vain.Categories.Utility:CreateModule({
 		Name = 'StaffDetector',
 		Function = function(callback)
 			if callback then
@@ -7523,7 +7523,7 @@ run(function()
 	local State
 	local hook
 	
-	StateSpoofer = vape.Categories.Utility:CreateModule({
+	StateSpoofer = vain.Categories.Utility:CreateModule({
 		Name = 'StateSpoofer',
 		Function = function(callback)
 			if callback then
@@ -7563,7 +7563,7 @@ end)
 run(function()
 	local connections = {}
 	
-	vape.Categories.World:CreateModule({
+	vain.Categories.World:CreateModule({
 		Name = 'Anti-AFK',
 		Function = function(callback)
 			if callback then
@@ -7589,7 +7589,7 @@ run(function()
 	local modified = {}
 	local thread
 	
-	FastProxPrompt = vape.Categories.World:CreateModule({
+	FastProxPrompt = vain.Categories.World:CreateModule({
 		Name = 'FastProxPrompt',
 		Function = function(callback)
 			if callback then
@@ -7671,7 +7671,7 @@ run(function()
 	local Value
 	local randomkey, module, old = httpService:GenerateGUID(false)
 	
-	Freecam = vape.Categories.World:CreateModule({
+	Freecam = vain.Categories.World:CreateModule({
 		Name = 'Freecam',
 		Function = function(callback)
 			if callback then
@@ -7779,7 +7779,7 @@ run(function()
 	local Value
 	local changed, old = false
 	
-	Gravity = vape.Categories.World:CreateModule({
+	Gravity = vain.Categories.World:CreateModule({
 		Name = 'Gravity',
 		Function = function(callback)
 			if callback then
@@ -7881,7 +7881,7 @@ run(function()
 		end
 	end
 	
-	MurderMystery = vape.Categories.World:CreateModule({
+	MurderMystery = vain.Categories.World:CreateModule({
 		Name = 'MurderMystery',
 		Function = function(callback)
 			if callback then
@@ -7889,9 +7889,9 @@ run(function()
 	
 				entitylib.getEntityColor = function(ent)
 					ent = ent.Player
-					if not (ent and vape.Settings.Modules.Options['Use team color'].Enabled) then return end
+					if not (ent and vain.Settings.Modules.Options['Use team color'].Enabled) then return end
 					if isFriend(ent, true) then
-						return Color3.fromHSV(vape.Categories.Friends.Options['Friends color'].Hue, vape.Categories.Friends.Options['Friends color'].Sat, vape.Categories.Friends.Options['Friends color'].Value)
+						return Color3.fromHSV(vain.Categories.Friends.Options['Friends color'].Hue, vain.Categories.Friends.Options['Friends color'].Sat, vain.Categories.Friends.Options['Friends color'].Value)
 					end
 					return murderer == ent and Color3.new(1, 0.3, 0.3) or sheriff == ent and Color3.new(0, 0.5, 1) or nil
 				end
@@ -7927,7 +7927,7 @@ end)
 run(function()
 	local Parkour
 	
-	Parkour = vape.Categories.World:CreateModule({
+	Parkour = vain.Categories.World:CreateModule({
 		Name = 'Parkour',
 		Function = function(callback)
 			if callback then
@@ -7953,7 +7953,7 @@ run(function()
 	rayCheck.RespectCanCollide = true
 	local module, old
 	
-	vape.Categories.World:CreateModule({
+	vain.Categories.World:CreateModule({
 		Name = 'SafeWalk',
 		Function = function(callback)
 			if callback then
@@ -8040,7 +8040,7 @@ run(function()
 		end
 	end
 	
-	Wallhop = vape.Categories.World:CreateModule({
+	Wallhop = vain.Categories.World:CreateModule({
 		Name = 'Wallhop',
 		Function = function(callback)
 			if callback then
@@ -8076,7 +8076,7 @@ run(function()
 		end
 	end
 	
-	Xray = vape.Categories.World:CreateModule({
+	Xray = vain.Categories.World:CreateModule({
 		Name = 'Xray',
 		Function = function(callback)
 			if callback then
@@ -8165,7 +8165,7 @@ run(function()
 		end
 	end
 	
-	Atmosphere = vape.Legit:CreateModule({
+	Atmosphere = vain.Legit:CreateModule({
 		Name = 'Atmosphere',
 		Function = function(callback)
 			if callback then
@@ -8262,7 +8262,7 @@ run(function()
 	local FadeOut
 	local trail, point, point2
 	
-	Breadcrumbs = vape.Legit:CreateModule({
+	Breadcrumbs = vain.Legit:CreateModule({
 		Name = 'Breadcrumbs',
 		Function = function(callback)
 			if callback then
@@ -8381,7 +8381,7 @@ run(function()
 		motor.Parent = part
 	end
 	
-	Cape = vape.Legit:CreateModule({
+	Cape = vain.Legit:CreateModule({
 		Name = 'Cape',
 		Function = function(callback)
 			if callback then
@@ -8449,11 +8449,11 @@ run(function()
 	local Color
 	local hat
 	
-	ChinaHat = vape.Legit:CreateModule({
+	ChinaHat = vain.Legit:CreateModule({
 		Name = 'China Hat',
 		Function = function(callback)
 			if callback then
-				if vape.ThreadFix then
+				if vain.ThreadFix then
 					setthreadidentity(8)
 				end
 	
@@ -8529,7 +8529,7 @@ run(function()
 	local TwentyFourHour
 	local label
 	
-	Clock = vape.Legit:CreateModule({
+	Clock = vain.Legit:CreateModule({
 		Name = 'Clock',
 		Function = function(callback)
 			if callback then
@@ -8684,7 +8684,7 @@ run(function()
 		end
 	end
 	
-	Disguise = vape.Legit:CreateModule({
+	Disguise = vain.Legit:CreateModule({
 		Name = 'Disguise',
 		Function = function(callback)
 			if callback then
@@ -8725,7 +8725,7 @@ run(function()
 	local Value
 	local oldfov
 	
-	FOV = vape.Legit:CreateModule({
+	FOV = vain.Legit:CreateModule({
 		Name = 'FOV',
 		Function = function(callback)
 			if callback then
@@ -8755,7 +8755,7 @@ run(function()
 	local FPS
 	local label
 	
-	FPS = vape.Legit:CreateModule({
+	FPS = vain.Legit:CreateModule({
 		Name = 'FPS',
 		Function = function(callback)
 			if callback then
@@ -8872,7 +8872,7 @@ run(function()
 		end
 	end
 	
-	Keystrokes = vape.Legit:CreateModule({
+	Keystrokes = vain.Legit:CreateModule({
 		Name = 'Keystrokes',
 		Function = function(callback)
 			if callback then
@@ -8935,7 +8935,7 @@ run(function()
 	local Memory
 	local label
 	
-	Memory = vape.Legit:CreateModule({
+	Memory = vain.Legit:CreateModule({
 		Name = 'Memory',
 		Function = function(callback)
 			if callback then
@@ -8983,7 +8983,7 @@ run(function()
 	local Data
 	local label
 	
-	Ping = vape.Legit:CreateModule({
+	Ping = vain.Legit:CreateModule({
 		Name = 'Ping',
 		Function = function(callback)
 			if callback then
@@ -9081,7 +9081,7 @@ run(function()
 		end
 	end
 	
-	SongBeats = vape.Legit:CreateModule({
+	SongBeats = vain.Legit:CreateModule({
 		Name = 'Song Beats',
 		Function = function(callback)
 			if callback then
@@ -9169,7 +9169,7 @@ run(function()
 	local Speedmeter
 	local label
 	
-	Speedmeter = vape.Legit:CreateModule({
+	Speedmeter = vain.Legit:CreateModule({
 		Name = 'Speedmeter',
 		Function = function(callback)
 			if callback then
@@ -9219,7 +9219,7 @@ run(function()
 	local Value
 	local old
 	
-	TimeChanger = vape.Legit:CreateModule({
+	TimeChanger = vain.Legit:CreateModule({
 		Name = 'Time Changer',
 		Function = function(callback)
 			if callback then
