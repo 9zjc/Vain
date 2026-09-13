@@ -4,7 +4,7 @@ end
 local cloneref = cloneref or function(obj)
 	return obj
 end
-local vainEvents = setmetatable({}, {
+local vapeEvents = setmetatable({}, {
 	__index = function(self, index)
 		self[index] = Instance.new('BindableEvent')
 		return self[index]
@@ -30,19 +30,17 @@ end
 local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
 
--- Vain BedWars module: removed the obsolete framework shutdown guard.
-
-local vain = shared.vain
-local entitylib = vain.Libraries.entity
-local targetinfo = vain.Libraries.targetinfo
-local sessioninfo = vain.Libraries.sessioninfo
-local uipallet = vain.Libraries.uipallet
-local tween = vain.Libraries.tween
-local color = vain.Libraries.color
-local whitelist = vain.Libraries.whitelist
-local prediction = vain.Libraries.prediction
-local getfontbounds = vain.Libraries.getfontbounds
-local getvainasset = vain.Libraries.getvainasset
+local vape = shared.vape
+local entitylib = vape.Libraries.entity
+local targetinfo = vape.Libraries.targetinfo
+local sessioninfo = vape.Libraries.sessioninfo
+local uipallet = vape.Libraries.uipallet
+local tween = vape.Libraries.tween
+local color = vape.Libraries.color
+local whitelist = vape.Libraries.whitelist
+local prediction = vape.Libraries.prediction
+local getfontbounds = vape.Libraries.getfontbounds
+local getvapeasset = vape.Libraries.getvapeasset
 
 local store = {
 	attackReach = 0,
@@ -74,7 +72,7 @@ local function addBlur(parent)
 	blur.Size = UDim2.new(1, 89, 1, 52)
 	blur.Position = UDim2.fromOffset(-48, -31)
 	blur.BackgroundTransparency = 1
-	blur.Image = getvainasset('vain/assets/new/blur.png')
+	blur.Image = getvapeasset('vain/assets/new/blur.png')
 	blur.ScaleType = Enum.ScaleType.Slice
 	blur.SliceCenter = Rect.new(52, 31, 261, 502)
 	blur.Parent = parent
@@ -311,17 +309,17 @@ local function hotbarSwitch(slot)
 			type = 'InventorySelectHotbarSlot',
 			slot = slot
 		})
-		vainEvents.InventoryChanged.Event:Wait()
+		vapeEvents.InventoryChanged.Event:Wait()
 		return true
 	end
 	return false
 end
 
 local function isFriend(plr, recolor)
-	if vain.Categories.Friends.Options['Use friends'].Enabled then
-		local friend = table.find(vain.Categories.Friends.ListEnabled, plr.Name) and true
+	if vape.Categories.Friends.Options['Use friends'].Enabled then
+		local friend = table.find(vape.Categories.Friends.ListEnabled, plr.Name) and true
 		if recolor then
-			friend = friend and vain.Categories.Friends.Options['Recolor visuals'].Enabled
+			friend = friend and vape.Categories.Friends.Options['Recolor visuals'].Enabled
 		end
 		return friend
 	end
@@ -329,11 +327,11 @@ local function isFriend(plr, recolor)
 end
 
 local function isTarget(plr)
-	return table.find(vain.Categories.Targets.ListEnabled, plr.Name) and true
+	return table.find(vape.Categories.Targets.ListEnabled, plr.Name) and true
 end
 
 local function notif(...) return
-	vain:CreateNotification(...)
+	vape:CreateNotification(...)
 end
 
 local function removeTags(str)
@@ -430,12 +428,8 @@ local sortmethods = {
 	Angle = function(a, b)
 		local selfrootpos = entitylib.character.RootPart.Position
 		local localfacing = entitylib.character.RootPart.CFrame.LookVector * Vector3.new(1, 0, 1)
-		local adelta = (a.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)
-		local bdelta = (b.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)
-		if localfacing.Magnitude < 0.001 or adelta.Magnitude < 0.001 or bdelta.Magnitude < 0.001 then return false end
-		local facing = localfacing.Unit
-		local angle = math.acos(math.clamp(facing:Dot(adelta.Unit), -1, 1))
-		local angle2 = math.acos(math.clamp(facing:Dot(bdelta.Unit), -1, 1))
+		local angle = math.acos(localfacing:Dot(((a.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)).Unit))
+		local angle2 = math.acos(localfacing:Dot(((b.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)).Unit))
 		return angle < angle2
 	end
 }
@@ -541,7 +535,7 @@ run(function()
 					entitylib.isAlive = true
 					entitylib.Events.LocalAdded:Fire(entity)
 					table.insert(entitylib.Connections, char.AttributeChanged:Connect(function(attr)
-						vainEvents.AttributeChanged:Fire(attr)
+						vapeEvents.AttributeChanged:Fire(attr)
 					end))
 				else
 					entity.Targetable = entitylib.targetCheck(entity)
@@ -643,7 +637,7 @@ run(function()
 		if not select(2, whitelist:get(ent.Player)) then return false end
 		return lplr:GetAttribute('Team') ~= ent.Player:GetAttribute('Team')
 	end
-	vain:Clean(entitylib.Events.LocalAdded:Connect(updateVelocity))
+	vape:Clean(entitylib.Events.LocalAdded:Connect(updateVelocity))
 end)
 entitylib.start()
 
@@ -778,7 +772,7 @@ run(function()
 	for i, v in remoteNames do
 		local remote = dumpRemote(debug.getconstants(v))
 		if remote == '' then
-			notif('Vain', 'Failed to grab remote ('..i..')', 10, 'alert')
+			notif('Vape', 'Failed to grab remote ('..i..')', 10, 'alert')
 		end
 		remotes[i] = remote
 	end
@@ -1003,11 +997,11 @@ run(function()
 			store.inventory = newinv
 
 			if newinv ~= oldinv then
-				vainEvents.InventoryChanged:Fire()
+				vapeEvents.InventoryChanged:Fire()
 			end
 
 			if newinv.inventory.items ~= oldinv.inventory.items then
-				vainEvents.InventoryAmountChanged:Fire()
+				vapeEvents.InventoryAmountChanged:Fire()
 				store.tools.sword = getSword()
 				for _, v in {'stone', 'wood', 'wool'} do
 					store.tools[v] = getTool(v)
@@ -1034,16 +1028,16 @@ run(function()
 	updateStore(bedwars.Store:getState(), {})
 
 	for _, event in {'MatchEndEvent', 'EntityDeathEvent', 'BedwarsBedBreak', 'BalloonPopped', 'AngelProgress', 'GrapplingHookFunctions'} do
-		if not vain.Connections then return end
+		if not vape.Connections then return end
 		bedwars.Client:WaitFor(event):andThen(function(connection)
-			vain:Clean(connection:Connect(function(...)
-				vainEvents[event]:Fire(...)
+			vape:Clean(connection:Connect(function(...)
+				vapeEvents[event]:Fire(...)
 			end))
 		end)
 	end
 
-	vain:Clean(bedwars.ZapNetworking.EntityDamageEventZap.On(function(...)
-		vainEvents.EntityDamageEvent:Fire({
+	vape:Clean(bedwars.ZapNetworking.EntityDamageEventZap.On(function(...)
+		vapeEvents.EntityDamageEvent:Fire({
 			entityInstance = ...,
 			damage = select(2, ...),
 			damageType = select(3, ...),
@@ -1056,7 +1050,7 @@ run(function()
 	end))
 
 	for _, event in {'PlaceBlockEvent', 'BreakBlockEvent'} do
-		vain:Clean(bedwars.ZapNetworking[event..'Zap'].On(function(...)
+		vape:Clean(bedwars.ZapNetworking[event..'Zap'].On(function(...)
 			local data = {
 				blockRef = {
 					blockPosition = ...,
@@ -1070,7 +1064,7 @@ run(function()
 					cache[i] = nil
 				end
 			end
-			vainEvents[event]:Fire(data)
+			vapeEvents[event]:Fire(data)
 		end))
 	end
 
@@ -1107,26 +1101,26 @@ run(function()
 
 	task.spawn(function()
 		pcall(function()
-			repeat task.wait() until store.matchState ~= 0 or vain.Loaded == nil
-			if vain.Loaded == nil then return end
+			repeat task.wait() until store.matchState ~= 0 or vape.Loaded == nil
+			if vape.Loaded == nil then return end
 			mapname = workspace:WaitForChild('Map', 5):WaitForChild('Worlds', 5):GetChildren()[1].Name
 			mapname = string.gsub(string.split(mapname, '_')[2] or mapname, '-', '') or 'Blank'
 		end)
 	end)
 
-	vain:Clean(vainEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
+	vape:Clean(vapeEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
 		if bedTable.player and bedTable.player.UserId == lplr.UserId then
 			beds:Increment()
 		end
 	end))
 
-	vain:Clean(vainEvents.MatchEndEvent.Event:Connect(function(winTable)
+	vape:Clean(vapeEvents.MatchEndEvent.Event:Connect(function(winTable)
 		if (bedwars.Store:getState().Game.myTeam or {}).id == winTable.winningTeamId or lplr.Neutral then
 			wins:Increment()
 		end
 	end))
 
-	vain:Clean(vainEvents.EntityDeathEvent.Event:Connect(function(deathTable)
+	vape:Clean(vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
 		local killer = playersService:GetPlayerFromCharacter(deathTable.fromEntity)
 		local killed = playersService:GetPlayerFromCharacter(deathTable.entityInstance)
 		if not killed or not killer then return end
@@ -1150,7 +1144,7 @@ run(function()
 				end
 			end
 			task.wait()
-		until vain.Loaded == nil
+		until vape.Loaded == nil
 	end)
 
 	pcall(function()
@@ -1168,7 +1162,7 @@ run(function()
 			task.spawn(function()
 				repeat
 					task.wait(0.1)
-				until vain.Loaded == nil or bedwars.AppController:isAppOpen('BedwarsItemShopApp')
+				until vape.Loaded == nil or bedwars.AppController:isAppOpen('BedwarsItemShopApp')
 
 				bedwars.Shop = require(replicatedStorage.TS.games.bedwars.shop['bedwars-shop']).BedwarsShop
 				bedwars.ShopItems = debug.getupvalue(debug.getupvalue(bedwars.Shop.getShopItem, 1), 2)
@@ -1177,11 +1171,11 @@ run(function()
 		end
 	end)
 
-	vain:Clean(function()
+	vape:Clean(function()
 		Client.Get = OldGet
 		bedwars.BlockController.isBlockBreakable = OldBreak
 		store.blockPlacer:disable()
-		for _, v in vainEvents do
+		for _, v in vapeEvents do
 			v:Destroy()
 		end
 		for _, v in cache do
@@ -1189,7 +1183,7 @@ run(function()
 			table.clear(v)
 		end
 		table.clear(store.blockPlacer)
-		table.clear(vainEvents)
+		table.clear(vapeEvents)
 		table.clear(bedwars)
 		table.clear(store)
 		table.clear(cache)
@@ -1201,7 +1195,7 @@ run(function()
 end)
 
 for _, v in {'AntiRagdoll', 'TriggerBot', 'SilentAim', 'AutoRejoin', 'Rejoin', 'Disabler', 'Timer', 'ServerHop', 'MouseTP', 'MurderMystery'} do
-	vain:Remove(v)
+	vape:Remove(v)
 end
 
 run(function()
@@ -1215,12 +1209,12 @@ run(function()
 	local KillauraTarget
 	local ClickAim
 	
-	AimAssist = vain.Categories.Combat:CreateModule({
+	AimAssist = vape.Categories.Combat:CreateModule({
 		Name = 'AimAssist',
 		Function = function(callback)
 			if callback then
 				AimAssist:Clean(runService.Heartbeat:Connect(function(dt)
-					if entitylib.isAlive and entitylib.character and entitylib.character.RootPart and store.hand and store.hand.toolType == 'sword' and bedwars.SwordController and ((not ClickAim.Enabled) or (tick() - bedwars.SwordController.lastSwing) < 0.4) then
+					if entitylib.isAlive and store.hand.toolType == 'sword' and ((not ClickAim.Enabled) or (tick() - bedwars.SwordController.lastSwing) < 0.4) then
 						local ent = not KillauraTarget.Enabled and entitylib.EntityPosition({
 							Range = Distance.Value,
 							Part = 'RootPart',
@@ -1230,12 +1224,10 @@ run(function()
 							Sort = sortmethods[Sort.Value]
 						}) or store.KillauraTarget
 	
-						if ent and ent.RootPart then
+						if ent then
 							local delta = (ent.RootPart.Position - entitylib.character.RootPart.Position)
-							local flatDelta = delta * Vector3.new(1, 0, 1)
 							local localfacing = entitylib.character.RootPart.CFrame.LookVector * Vector3.new(1, 0, 1)
-							if flatDelta.Magnitude < 0.001 or localfacing.Magnitude < 0.001 then return end
-							local angle = math.acos(math.clamp(localfacing.Unit:Dot(flatDelta.Unit), -1, 1))
+							local angle = math.acos(localfacing:Dot((delta * Vector3.new(1, 0, 1)).Unit))
 							if angle >= (math.rad(AngleSlider.Value) / 2) then return end
 							targetinfo.Targets[ent] = tick() + 1
 							gameCamera.CFrame = gameCamera.CFrame:Lerp(CFrame.lookAt(gameCamera.CFrame.p, ent.RootPart.Position), (AimSpeed.Value + (StrafeIncrease.Enabled and (inputService:IsKeyDown(Enum.KeyCode.A) or inputService:IsKeyDown(Enum.KeyCode.D)) and 10 or 0)) * dt)
@@ -1323,7 +1315,7 @@ run(function()
 		end)
 	end
 	
-	AutoClicker = vain.Categories.Combat:CreateModule({
+	AutoClicker = vape.Categories.Combat:CreateModule({
 		Name = 'AutoClicker',
 		Function = function(callback)
 			if callback then
@@ -1389,7 +1381,7 @@ end)
 run(function()
 	local old
 	
-	vain.Categories.Combat:CreateModule({
+	vape.Categories.Combat:CreateModule({
 		Name = 'NoClickDelay',
 		Function = function(callback)
 			if callback then
@@ -1407,9 +1399,46 @@ run(function()
 end)
 
 run(function()
+	local NoCooldown
+	local originals = {}
+	
+	local function patch(controller, method, result)
+	if type(controller) ~= 'table' or type(controller[method]) ~= 'function' then return end
+	for _, entry in originals do
+	if entry[1] == controller and entry[2] == method then return end
+	end
+	table.insert(originals, {controller, method, controller[method]})
+	controller[method] = function()
+	return result
+	end
+	end
+	
+	NoCooldown = vape.Categories.Combat:CreateModule({
+	Name = 'NoCooldown',
+	Function = function(callback)
+	if callback then
+	patch(bedwars.SwordController, 'isClickingTooFast', false)
+	patch(bedwars.BlockBreakController and bedwars.BlockBreakController.blockBreaker, 'getCooldown', 0)
+	patch(bedwars.BlockBreakController and bedwars.BlockBreakController.blockBreaker, 'isOnCooldown', false)
+	patch(bedwars.ProjectileController, 'isOnCooldown', false)
+	patch(bedwars.ConsumeController, 'isOnCooldown', false)
+	patch(bedwars.CannonController, 'isOnCooldown', false)
+	patch(bedwars.CooldownController, 'isOnCooldown', false)
+	else
+	for _, entry in originals do
+	entry[1][entry[2]] = entry[3]
+	end
+	table.clear(originals)
+	end
+	end,
+	Tooltip = 'Removes supported BedWars item and action cooldown checks'
+	})
+end)
+
+run(function()
 	local Value
 	
-	Reach = vain.Categories.Combat:CreateModule({
+	Reach = vape.Categories.Combat:CreateModule({
 		Name = 'Reach',
 		Function = function(callback)
 			bedwars.CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = callback and Value.Value + 2 or 14.4
@@ -1436,7 +1465,7 @@ run(function()
 	local Sprint
 	local old
 	
-	Sprint = vain.Categories.Combat:CreateModule({
+	Sprint = vape.Categories.Combat:CreateModule({
 		Name = 'Sprint',
 		Function = function(callback)
 			if callback then
@@ -1476,7 +1505,7 @@ run(function()
 	local CPS
 	local rayParams = RaycastParams.new()
 	
-	TriggerBot = vain.Categories.Combat:CreateModule({
+	TriggerBot = vape.Categories.Combat:CreateModule({
 		Name = 'TriggerBot',
 		Function = function(callback)
 			if callback then
@@ -1531,7 +1560,7 @@ run(function()
 	local TargetCheck
 	local rand, old = Random.new()
 	
-	Velocity = vain.Categories.Combat:CreateModule({
+	Velocity = vape.Categories.Combat:CreateModule({
 		Name = 'Velocity',
 		Function = function(callback)
 			if callback then
@@ -1603,7 +1632,7 @@ run(function()
 		return mag
 	end
 
-	AntiFall = vain.Categories.Blatant:CreateModule({
+	AntiFall = vape.Categories.Blatant:CreateModule({
 		Name = 'AntiFall',
 		Function = function(callback)
 			if callback then
@@ -1632,7 +1661,7 @@ run(function()
 									local lastTeleport = lplr:GetAttribute('LastTeleported')
 									local connection
 									connection = runService.PreSimulation:Connect(function()
-										if vain.Modules.Fly.Enabled or vain.Modules.InfiniteFly.Enabled or vain.Modules.LongJump.Enabled then
+										if vape.Modules.Fly.Enabled or vape.Modules.InfiniteFly.Enabled or vape.Modules.LongJump.Enabled then
 											connection:Disconnect()
 											AntiFallDirection = nil
 											return
@@ -1726,7 +1755,7 @@ run(function()
 	local FastBreak
 	local Time
 	
-	FastBreak = vain.Categories.Blatant:CreateModule({
+	FastBreak = vape.Categories.Blatant:CreateModule({
 		Name = 'FastBreak',
 		Function = function(callback)
 			if callback then
@@ -1762,7 +1791,7 @@ run(function()
 	rayCheck.RespectCanCollide = true
 	local up, down, old = 0, 0
 
-	Fly = vain.Categories.Blatant:CreateModule({
+	Fly = vape.Categories.Blatant:CreateModule({
 		Name = 'Fly',
 		Function = function(callback)
 			frictionTable.Fly = callback or nil
@@ -1775,7 +1804,7 @@ run(function()
 				if lplr.Character and (lplr.Character:GetAttribute('InflatedBalloons') or 0) == 0 and getItem('balloon') then
 					bedwars.BalloonController:inflateBalloon()
 				end
-				Fly:Clean(vainEvents.AttributeChanged.Event:Connect(function(changed)
+				Fly:Clean(vapeEvents.AttributeChanged.Event:Connect(function(changed)
 					if changed == 'InflatedBalloons' and (lplr.Character:GetAttribute('InflatedBalloons') or 0) == 0 and getItem('balloon') then
 						bedwars.BalloonController:inflateBalloon()
 					end
@@ -1921,7 +1950,7 @@ run(function()
 		end
 	end
 	
-	HitBoxes = vain.Categories.Blatant:CreateModule({
+	HitBoxes = vape.Categories.Blatant:CreateModule({
 		Name = 'HitBoxes',
 		Function = function(callback)
 			if callback then
@@ -1988,7 +2017,7 @@ run(function()
 end)
 
 run(function()
-	vain.Categories.Blatant:CreateModule({
+	vape.Categories.Blatant:CreateModule({
 		Name = 'KeepSprint',
 		Function = function(callback)
 			debug.setconstant(bedwars.SprintController.startSprinting, 5, callback and 'blockSprinting' or 'blockSprint')
@@ -2025,16 +2054,13 @@ run(function()
 	local AnimationTween
 	local Limit
 	local LegitAura
+	local HighHitreg
+	local DynamicDelay
 	local Particles, Boxes = {}, {}
-	local anims, AnimDelay, AnimTween, armC0 = vain.Libraries.auraanims, tick()
+	local anims, AnimDelay, AnimTween, armC0 = vape.Libraries.auraanims, tick()
 	local AttackRemote = {FireServer = function() end}
 	task.spawn(function()
-		local success, remote = pcall(function()
-			return bedwars.Client:Get(remotes.AttackEntity).instance
-		end)
-		if success and remote then
-			AttackRemote = remote
-		end
+		AttackRemote = bedwars.Client:Get(remotes.AttackEntity).instance
 	end)
 
 	local function getAttackData()
@@ -2047,10 +2073,9 @@ run(function()
 		end
 
 		local sword = Limit.Enabled and store.hand or store.tools.sword
-		if not sword or not sword.tool or not bedwars.ItemMeta then return false end
+		if not sword or not sword.tool then return false end
 
 		local meta = bedwars.ItemMeta[sword.tool.Name]
-		if not meta or not meta.sword then return false end
 		if Limit.Enabled then
 			if store.hand.toolType ~= 'sword' or bedwars.DaoController.chargingMaid then return false end
 		end
@@ -2062,7 +2087,7 @@ run(function()
 		return sword, meta
 	end
 
-	Killaura = vain.Categories.Blatant:CreateModule({
+	Killaura = vape.Categories.Blatant:CreateModule({
 		Name = 'Killaura',
 		Function = function(callback)
 			if callback then
@@ -2150,9 +2175,7 @@ run(function()
 
 							for _, v in plrs do
 								local delta = (v.RootPart.Position - selfpos)
-								local flatDelta = delta * Vector3.new(1, 0, 1)
-								if flatDelta.Magnitude < 0.001 or localfacing.Magnitude < 0.001 then continue end
-								local angle = math.acos(math.clamp(localfacing.Unit:Dot(flatDelta.Unit), -1, 1))
+								local angle = math.acos(localfacing:Dot((delta * Vector3.new(1, 0, 1)).Unit))
 								if angle > (math.rad(AngleSlider.Value) / 2) then continue end
 
 								table.insert(attacked, {
@@ -2171,7 +2194,7 @@ run(function()
 											bedwars.ScytheController:playLocalAnimation()
 										end
 
-										if vain.ThreadFix then
+										if vape.ThreadFix then
 											setthreadidentity(8)
 										end
 									end
@@ -2179,7 +2202,7 @@ run(function()
 
 								if delta.Magnitude > AttackRange.Value then continue end
 
-								local actualRoot = v.Character and v.Character.PrimaryPart
+								local actualRoot = v.Character.PrimaryPart
 								if actualRoot then
 									local dir = CFrame.lookAt(selfpos, actualRoot.Position).LookVector
 									local pos = selfpos + dir * math.max(delta.Magnitude - 14.399, 0)
@@ -2223,7 +2246,14 @@ run(function()
 						entitylib.character.RootPart.CFrame = CFrame.lookAt(entitylib.character.RootPart.Position, Vector3.new(vec.X, entitylib.character.RootPart.Position.Y + 0.001, vec.Z))
 					end
 
-					task.wait(#attacked > 0 and #attacked * 0.02 or 1 / UpdateRate.Value)
+					local delay = #attacked > 0 and #attacked * 0.02 or 1 / UpdateRate.Value
+					if HighHitreg.Enabled then
+						delay = math.min(delay, 0.01)
+					end
+					if DynamicDelay.Enabled then
+						delay = math.max(delay - math.clamp(store.attackReach or 0, 0, 10) * 0.001, 0.005)
+					end
+					task.wait(delay)
 				until not Killaura.Enabled
 			else
 				store.KillauraTarget = nil
@@ -2318,7 +2348,7 @@ run(function()
 					box.Size = Vector3.new(3, 5, 3)
 					box.CFrame = CFrame.new(0, -0.5, 0)
 					box.ZIndex = 0
-					box.Parent = vain.holder
+					box.Parent = vape.holder
 					Boxes[i] = box
 				end
 			else
@@ -2487,6 +2517,16 @@ run(function()
 		Name = 'Swing only',
 		Tooltip = 'Only attacks while swinging manually'
 	})
+	HighHitreg = Killaura:CreateToggle({
+		Name = 'High hitreg',
+		Default = false,
+		Tooltip = 'Uses a tighter attack loop; disabled by default'
+	})
+	DynamicDelay = Killaura:CreateToggle({
+		Name = 'Dynamic delay',
+		Default = false,
+		Tooltip = 'Adjusts attack timing using recent hit distance'
+	})
 end)
 
 run(function()
@@ -2559,7 +2599,7 @@ run(function()
 			end)
 		end,
 		cat = function(_, _, dir)
-			LongJump:Clean(vainEvents.CatPounce.Event:Connect(function()
+			LongJump:Clean(vapeEvents.CatPounce.Event:Connect(function()
 				JumpSpeed = 4 * Value.Value
 				JumpTick = tick() + 2.5
 				Direction = Vector3.new(dir.X, 0, dir.Z).Unit
@@ -2624,13 +2664,13 @@ run(function()
 	LongJumpMethods.siege_tnt = LongJumpMethods.tnt
 	LongJumpMethods.pirate_gunpowder_barrel = LongJumpMethods.tnt
 	
-	LongJump = vain.Categories.Blatant:CreateModule({
+	LongJump = vape.Categories.Blatant:CreateModule({
 		Name = 'LongJump',
 		Function = function(callback)
 			frictionTable.LongJump = callback or nil
 			updateVelocity()
 			if callback then
-				LongJump:Clean(vainEvents.EntityDamageEvent.Event:Connect(function(damageTable)
+				LongJump:Clean(vapeEvents.EntityDamageEvent.Event:Connect(function(damageTable)
 					if damageTable.entityInstance == lplr.Character and damageTable.fromEntity == lplr.Character and (not damageTable.knockbackMultiplier or not damageTable.knockbackMultiplier.disabled) then
 						local knockbackBoost = bedwars.KnockbackUtil.calculateKnockbackVelocity(Vector3.one, 1, {
 							vertical = 0,
@@ -2647,7 +2687,7 @@ run(function()
 						end
 					end
 				end))
-				LongJump:Clean(vainEvents.GrapplingHookFunctions.Event:Connect(function(dataTable)
+				LongJump:Clean(vapeEvents.GrapplingHookFunctions.Event:Connect(function(dataTable)
 					if dataTable.hookFunction == 'PLAYER_IN_TRANSIT' then
 						local vec = entitylib.character.RootPart.CFrame.LookVector
 						JumpSpeed = 2.5 * Value.Value
@@ -2727,7 +2767,7 @@ run(function()
 		groundHit = bedwars.Client:Get(remotes.GroundHit).instance
 	end)
 	
-	NoFall = vain.Categories.Blatant:CreateModule({
+	NoFall = vape.Categories.Blatant:CreateModule({
 		Name = 'NoFall',
 		Function = function(callback)
 			if callback then
@@ -2805,7 +2845,7 @@ end)
 run(function()
 	local old
 	
-	vain.Categories.Blatant:CreateModule({
+	vape.Categories.Blatant:CreateModule({
 		Name = 'NoSlowdown',
 		Function = function(callback)
 			local modifier = bedwars.SprintController:getMovementStatusModifier()
@@ -2842,7 +2882,7 @@ run(function()
 	rayCheck.FilterDescendantsInstances = {workspace:FindFirstChild('Map')}
 	local old
 	
-	local ProjectileAimbot = vain.Categories.Blatant:CreateModule({
+	local ProjectileAimbot = vape.Categories.Blatant:CreateModule({
 		Name = 'ProjectileAimbot',
 		Function = function(callback)
 			if callback then
@@ -2972,7 +3012,7 @@ run(function()
 		return items
 	end
 	
-	ProjectileAura = vain.Categories.Blatant:CreateModule({
+	ProjectileAura = vape.Categories.Blatant:CreateModule({
 		Name = 'ProjectileAura',
 		Function = function(callback)
 			if callback then
@@ -3058,7 +3098,7 @@ run(function()
 	local rayCheck = RaycastParams.new()
 	rayCheck.RespectCanCollide = true
 	
-	Speed = vain.Categories.Blatant:CreateModule({
+	Speed = vape.Categories.Blatant:CreateModule({
 		Name = 'Speed',
 		Function = function(callback)
 			frictionTable.Speed = callback or nil
@@ -3131,7 +3171,7 @@ run(function()
 	local BedESP
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vain.holder
+	Folder.Parent = vape.holder
 	
 	local function Added(bed)
 		if not BedESP.Enabled then return end
@@ -3165,7 +3205,7 @@ run(function()
 		table.clear(parts)
 	end
 	
-	BedESP = vain.Categories.Render:CreateModule({
+	BedESP = vape.Categories.Render:CreateModule({
 		Name = 'BedESP',
 		Function = function(callback)
 			if callback then
@@ -3191,9 +3231,76 @@ run(function()
 end)
 
 run(function()
+	local CrateESP
+	local Folder = Instance.new('Folder')
+	Folder.Parent = vape.holder
+	local Reference = {}
+	local Tags = {'crate', 'lucky-block', 'luckyblock', 'resource-crate'}
+	
+	local function getPart(obj)
+	if obj:IsA('BasePart') then return obj end
+	if obj:IsA('Model') then
+	return obj.PrimaryPart or obj:FindFirstChildWhichIsA('BasePart')
+	end
+	return obj:FindFirstChildWhichIsA('BasePart', true)
+	end
+	
+	local function add(obj)
+	if Reference[obj] then return end
+	local part = getPart(obj)
+	if not part then return end
+	local billboard = Instance.new('BillboardGui')
+	billboard.Name = 'VainCrateESP'
+	billboard.Size = UDim2.fromOffset(120, 24)
+	billboard.StudsOffsetWorldSpace = Vector3.new(0, 2.5, 0)
+	billboard.AlwaysOnTop = true
+	billboard.Adornee = part
+	billboard.Parent = Folder
+	local label = Instance.new('TextLabel')
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.Text = obj.Name:gsub('_', ' ')
+	label.TextColor3 = Color3.fromRGB(255, 220, 80)
+	label.TextStrokeTransparency = 0.35
+	label.TextSize = 13
+	label.Font = Enum.Font.GothamBold
+	label.Parent = billboard
+	Reference[obj] = billboard
+	end
+	
+	local function remove(obj)
+	if Reference[obj] then
+	Reference[obj]:Destroy()
+	Reference[obj] = nil
+	end
+	end
+	
+	CrateESP = vape.Categories.Render:CreateModule({
+	Name = 'CrateESP',
+	Function = function(callback)
+	if callback then
+	for _, tag in Tags do
+	CrateESP:Clean(collectionService:GetInstanceAddedSignal(tag):Connect(add))
+	CrateESP:Clean(collectionService:GetInstanceRemovedSignal(tag):Connect(remove))
+	for _, obj in collectionService:GetTagged(tag) do
+	add(obj)
+	end
+	end
+	else
+	for obj, billboard in Reference do
+	billboard:Destroy()
+	Reference[obj] = nil
+	end
+	end
+	end,
+	Tooltip = 'Renders crates, chests and lucky blocks through walls'
+	})
+end)
+
+run(function()
 	local Health
 	
-	Health = vain.Categories.Render:CreateModule({
+	Health = vape.Categories.Render:CreateModule({
 		Name = 'Health',
 		Function = function(callback)
 			if callback then
@@ -3206,9 +3313,9 @@ run(function()
 				label.TextColor3 = entitylib.isAlive and Color3.fromHSV((lplr.Character:GetAttribute('Health') / lplr.Character:GetAttribute('MaxHealth')) / 2.8, 0.86, 1) or Color3.new()
 				label.TextSize = 18
 				label.Font = Enum.Font.Arial
-				label.Parent = vain.gui
+				label.Parent = vape.gui
 				Health:Clean(label)
-				Health:Clean(vainEvents.AttributeChanged.Event:Connect(function()
+				Health:Clean(vapeEvents.AttributeChanged.Event:Connect(function()
 					label.Text = entitylib.isAlive and math.round(lplr.Character:GetAttribute('Health'))..' ❤️' or ''
 					label.TextColor3 = entitylib.isAlive and Color3.fromHSV((lplr.Character:GetAttribute('Health') / lplr.Character:GetAttribute('MaxHealth')) / 2.8, 0.86, 1) or Color3.new()
 				end))
@@ -3224,7 +3331,7 @@ run(function()
 	local Color = {}
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vain.holder
+	Folder.Parent = vape.holder
 	
 	local ESPKits = {
 		alchemist = {'alchemist_ingedients', 'wild_flower'},
@@ -3278,7 +3385,7 @@ run(function()
 		end
 	end
 	
-	KitESP = vain.Categories.Render:CreateModule({
+	KitESP = vape.Categories.Render:CreateModule({
 		Name = 'KitESP',
 		Function = function(callback)
 			if callback then
@@ -3320,6 +3427,91 @@ run(function()
 end)
 
 run(function()
+	local KitSpy
+	local Folder = Instance.new('Folder')
+	Folder.Parent = vape.holder
+	local Reference = {}
+	local Connections = {}
+	
+	local function clearBillboard(plr)
+	if Reference[plr] then
+	Reference[plr]:Destroy()
+	Reference[plr] = nil
+	end
+	end
+	
+	local function clearPlayer(plr)
+	clearBillboard(plr)
+	if Connections[plr] then
+	for _, connection in Connections[plr] do
+	connection:Disconnect()
+	end
+	Connections[plr] = nil
+	end
+	end
+	
+	local function attach(plr, char)
+	clearBillboard(plr)
+	local head = char and char:FindFirstChild('Head')
+	if not head then return end
+	local billboard = Instance.new('BillboardGui')
+	billboard.Name = 'VainKitSpy'
+	billboard.Size = UDim2.fromOffset(150, 24)
+	billboard.StudsOffsetWorldSpace = Vector3.new(0, 3.2, 0)
+	billboard.AlwaysOnTop = true
+	billboard.Adornee = head
+	billboard.Parent = Folder
+	local label = Instance.new('TextLabel')
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.TextColor3 = Color3.fromRGB(180, 220, 255)
+	label.TextStrokeTransparency = 0.35
+	label.TextSize = 13
+	label.Font = Enum.Font.GothamBold
+	label.Parent = billboard
+	local function update()
+	local kit = plr:GetAttribute('PlayingAsKit')
+	label.Text = plr.DisplayName..' ['..(kit and kit ~= 'none' and kit or 'Unknown')..']'
+	end
+	update()
+	Connections[plr] = Connections[plr] or {}
+	table.insert(Connections[plr], plr:GetAttributeChangedSignal('PlayingAsKit'):Connect(update))
+	table.insert(Connections[plr], char.AncestryChanged:Connect(function(_, parent)
+	if not parent then clearBillboard(plr) end
+	end))
+	Reference[plr] = billboard
+	end
+	
+	local function watch(plr)
+	if plr == lplr then return end
+	clearPlayer(plr)
+	Connections[plr] = {plr.CharacterAdded:Connect(function(char)
+	task.wait(0.5)
+	if KitSpy.Enabled then attach(plr, char) end
+	end)}
+	if plr.Character then attach(plr, plr.Character) end
+	end
+	
+	KitSpy = vape.Categories.Render:CreateModule({
+	Name = 'KitSpy',
+	Function = function(callback)
+	if callback then
+	for _, plr in playersService:GetPlayers() do
+	watch(plr)
+	end
+	KitSpy:Clean(playersService.PlayerAdded:Connect(watch))
+	KitSpy:Clean(playersService.PlayerRemoving:Connect(clearPlayer))
+	else
+	for _, plr in playersService:GetPlayers() do
+	clearPlayer(plr)
+	end
+	end
+	end,
+	Tooltip = 'Shows the kit selected by each BedWars player'
+	})
+end)
+
+run(function()
 	local NameTags
 	local Targets
 	local Color
@@ -3336,7 +3528,7 @@ run(function()
 	local DistanceLimit
 	local Strings, Sizes, Reference = {}, {}, {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vain.gui
+	Folder.Parent = vape.gui
 	local methodused
 	
 	local Added = {
@@ -3477,7 +3669,7 @@ run(function()
 		Drawing = function(ent)
 			local nametag = Reference[ent]
 			if nametag then
-				if vain.ThreadFix then
+				if vape.ThreadFix then
 					setthreadidentity(8)
 				end
 				Sizes[ent] = nil
@@ -3576,7 +3768,7 @@ run(function()
 		end
 	}
 	
-	NameTags = vain.Categories.Render:CreateModule({
+	NameTags = vape.Categories.Render:CreateModule({
 		Name = 'NameTags',
 		Function = function(callback)
 			if callback then
@@ -3605,7 +3797,7 @@ run(function()
 					end
 				end
 				if ColorFunc[methodused] then
-					NameTags:Clean(vain.Categories.Friends.ColorUpdate.Event:Connect(function()
+					NameTags:Clean(vape.Categories.Friends.ColorUpdate.Event:Connect(function()
 						ColorFunc[methodused](Color.Hue, Color.Sat, Color.Value)
 					end))
 				end
@@ -3755,7 +3947,7 @@ run(function()
 	local Color = {}
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vain.holder
+	Folder.Parent = vape.holder
 	
 	local function nearStorageItem(item)
 		for _, v in List.ListEnabled do
@@ -3839,7 +4031,7 @@ run(function()
 		task.spawn(refreshAdornee, billboard)
 	end
 	
-	StorageESP = vain.Categories.Render:CreateModule({
+	StorageESP = vape.Categories.Render:CreateModule({
 		Name = 'StorageESP',
 		Function = function(callback)
 			if callback then
@@ -3888,9 +4080,76 @@ run(function()
 end)
 
 run(function()
+	local TrapESP
+	local Folder = Instance.new('Folder')
+	Folder.Parent = vape.holder
+	local Reference = {}
+	local Tags = {'trap', 'snap-trap', 'landmine', 'bedwars-trap', 'mine'}
+	
+	local function getPart(obj)
+	if obj:IsA('BasePart') then return obj end
+	if obj:IsA('Model') then
+	return obj.PrimaryPart or obj:FindFirstChildWhichIsA('BasePart')
+	end
+	return obj:FindFirstChildWhichIsA('BasePart', true)
+	end
+	
+	local function add(obj)
+	if Reference[obj] then return end
+	local part = getPart(obj)
+	if not part then return end
+	local billboard = Instance.new('BillboardGui')
+	billboard.Name = 'VainTrapESP'
+	billboard.Size = UDim2.fromOffset(120, 24)
+	billboard.StudsOffsetWorldSpace = Vector3.new(0, 2.5, 0)
+	billboard.AlwaysOnTop = true
+	billboard.Adornee = part
+	billboard.Parent = Folder
+	local label = Instance.new('TextLabel')
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.Text = obj.Name:gsub('_', ' ')
+	label.TextColor3 = Color3.fromRGB(255, 90, 90)
+	label.TextStrokeTransparency = 0.35
+	label.TextSize = 13
+	label.Font = Enum.Font.GothamBold
+	label.Parent = billboard
+	Reference[obj] = billboard
+	end
+	
+	local function remove(obj)
+	if Reference[obj] then
+	Reference[obj]:Destroy()
+	Reference[obj] = nil
+	end
+	end
+	
+	TrapESP = vape.Categories.Render:CreateModule({
+	Name = 'TrapESP',
+	Function = function(callback)
+	if callback then
+	for _, tag in Tags do
+	TrapESP:Clean(collectionService:GetInstanceAddedSignal(tag):Connect(add))
+	TrapESP:Clean(collectionService:GetInstanceRemovedSignal(tag):Connect(remove))
+	for _, obj in collectionService:GetTagged(tag) do
+	add(obj)
+	end
+	end
+	else
+	for obj, billboard in Reference do
+	billboard:Destroy()
+	Reference[obj] = nil
+	end
+	end
+	end,
+	Tooltip = 'Highlights traps and landmines through walls'
+	})
+end)
+
+run(function()
 	local AutoBalloon
 	
-	AutoBalloon = vain.Categories.Utility:CreateModule({
+	AutoBalloon = vape.Categories.Utility:CreateModule({
 		Name = 'AutoBalloon',
 		Function = function(callback)
 			if callback then
@@ -4010,7 +4269,7 @@ run(function()
 		cat = function()
 			local old = bedwars.CatController.leap
 			bedwars.CatController.leap = function(...)
-				vainEvents.CatPounce:Fire()
+				vapeEvents.CatPounce:Fire()
 				return old(...)
 			end
 	
@@ -4274,7 +4533,7 @@ run(function()
 		end
 	}
 	
-	AutoKit = vain.Categories.Utility:CreateModule({
+	AutoKit = vape.Categories.Utility:CreateModule({
 		Name = 'AutoKit',
 		Function = function(callback)
 			if callback then
@@ -4327,7 +4586,7 @@ run(function()
 		end
 	end
 	
-	AutoPearl = vain.Categories.Utility:CreateModule({
+	AutoPearl = vape.Categories.Utility:CreateModule({
 		Name = 'AutoPearl',
 		Function = function(callback)
 			if callback then
@@ -4384,16 +4643,16 @@ run(function()
 		end
 	end
 	
-	AutoPlay = vain.Categories.Utility:CreateModule({
+	AutoPlay = vape.Categories.Utility:CreateModule({
 		Name = 'AutoPlay',
 		Function = function(callback)
 			if callback then
-				AutoPlay:Clean(vainEvents.EntityDeathEvent.Event:Connect(function(deathTable)
+				AutoPlay:Clean(vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
 					if deathTable.finalKill and deathTable.entityInstance == lplr.Character and isEveryoneDead() and store.matchState ~= 2 then
 						joinQueue()
 					end
 				end))
-				AutoPlay:Clean(vainEvents.MatchEndEvent.Event:Connect(joinQueue))
+				AutoPlay:Clean(vapeEvents.MatchEndEvent.Event:Connect(joinQueue))
 			end
 		end,
 		Tooltip = 'Automatically queues after the match ends.'
@@ -4415,7 +4674,7 @@ run(function()
 		return crossbows
 	end
 	
-	vain.Categories.Utility:CreateModule({
+	vape.Categories.Utility:CreateModule({
 		Name = 'AutoShoot',
 		Function = function(callback)
 			if callback then
@@ -4477,11 +4736,11 @@ run(function()
 		end
 	end
 	
-	AutoToxic = vain.Categories.Utility:CreateModule({
+	AutoToxic = vape.Categories.Utility:CreateModule({
 		Name = 'AutoToxic',
 		Function = function(callback)
 			if callback then
-				AutoToxic:Clean(vainEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
+				AutoToxic:Clean(vapeEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
 					if Toggles.BedDestroyed.Enabled and bedTable.brokenBedTeam.id == lplr:GetAttribute('Team') then
 						sendMessage('BedDestroyed', (bedTable.player.DisplayName or bedTable.player.Name), 'how dare you >:( | <obj>')
 					elseif Toggles.Bed.Enabled and bedTable.player.UserId == lplr.UserId then
@@ -4489,7 +4748,7 @@ run(function()
 						sendMessage('Bed', team and team.displayName:lower() or 'white', 'nice bed lul | <obj>')
 					end
 				end))
-				AutoToxic:Clean(vainEvents.EntityDeathEvent.Event:Connect(function(deathTable)
+				AutoToxic:Clean(vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
 					if deathTable.finalKill then
 						local killer = playersService:GetPlayerFromCharacter(deathTable.fromEntity)
 						local killed = playersService:GetPlayerFromCharacter(deathTable.entityInstance)
@@ -4504,7 +4763,7 @@ run(function()
 						end
 					end
 				end))
-				AutoToxic:Clean(vainEvents.MatchEndEvent.Event:Connect(function(winstuff)
+				AutoToxic:Clean(vapeEvents.MatchEndEvent.Event:Connect(function(winstuff)
 					if GG.Enabled then
 						if textChatService.ChatVersion == Enum.ChatVersion.TextChatService then
 							textChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync('gg')
@@ -4546,10 +4805,77 @@ run(function()
 end)
 
 run(function()
+	local AutoTrap
+	local running = false
+	
+	local function getBed()
+	local team = lplr:GetAttribute('Team')
+	local closest, distance = nil, math.huge
+	if not entitylib.isAlive then return end
+	for _, bed in collectionService:GetTagged('bed') do
+	local bedTeam = bed:GetAttribute('Team') or bed:GetAttribute('TeamId')
+	local owner = bed:GetAttribute('PlacedByUserId') or bed:GetAttribute('OwnerUserId')
+	if (bedTeam and bedTeam == team) or owner == lplr.UserId or (bed.Name:lower():find(team and tostring(team):lower() or '\0', 1, true) ~= nil) then
+	local part = bed:IsA('BasePart') and bed or bed.PrimaryPart or bed:FindFirstChildWhichIsA('BasePart')
+	if part then
+	local newDistance = (part.Position - entitylib.character.RootPart.Position).Magnitude
+	if newDistance < distance then
+	closest, distance = part, newDistance
+	end
+	end
+	end
+	end
+	return closest
+	end
+	
+	local function getTrap()
+	for _, item in store.inventory.inventory.items do
+	if item.itemType and (item.itemType:lower():find('trap') or item.itemType:lower():find('mine')) then
+	return item
+	end
+	end
+	end
+	
+	AutoTrap = vape.Categories.Utility:CreateModule({
+	Name = 'AutoTrap',
+	Function = function(callback)
+	if not callback then
+	running = false
+	return
+	end
+	running = true
+	task.spawn(function()
+	while running and AutoTrap.Enabled do
+	local bed = getBed()
+	local trap = getTrap()
+	if bed and trap then
+	for _, offset in {
+	Vector3.new(3, 0, 0),
+	Vector3.new(-3, 0, 0),
+	Vector3.new(0, 0, 3),
+	Vector3.new(0, 0, -3)
+	} do
+	if not running or not AutoTrap.Enabled then break end
+	local position = bed.Position + offset
+	if not getPlacedBlock(position) then
+	pcall(bedwars.placeBlock, position, trap.itemType, false)
+	task.wait(0.12)
+	end
+	end
+	end
+	task.wait(0.5)
+	end
+	end)
+	end,
+	Tooltip = 'Places purchased traps around your bed'
+	})
+end)
+
+run(function()
 	local AutoVoidDrop
 	local OwlCheck
 	
-	AutoVoidDrop = vain.Categories.Utility:CreateModule({
+	AutoVoidDrop = vape.Categories.Utility:CreateModule({
 		Name = 'AutoVoidDrop',
 		Function = function(callback)
 			if callback then
@@ -4602,7 +4928,7 @@ end)
 run(function()
 	local MissileTP
 	
-	MissileTP = vain.Categories.Utility:CreateModule({
+	MissileTP = vape.Categories.Utility:CreateModule({
 		Name = 'MissileTP',
 		Function = function(callback)
 			if callback then
@@ -4646,7 +4972,7 @@ run(function()
 	local Network
 	local Lower
 	
-	PickupRange = vain.Categories.Utility:CreateModule({
+	PickupRange = vape.Categories.Utility:CreateModule({
 		Name = 'PickupRange',
 		Function = function(callback)
 			if callback then
@@ -4706,7 +5032,7 @@ end)
 run(function()
 	local RavenTP
 	
-	RavenTP = vain.Categories.Utility:CreateModule({
+	RavenTP = vape.Categories.Utility:CreateModule({
 		Name = 'RavenTP',
 		Function = function(callback)
 			if callback then
@@ -4815,7 +5141,7 @@ run(function()
 		return nil, 0
 	end
 	
-	Scaffold = vain.Categories.Utility:CreateModule({
+	Scaffold = vape.Categories.Utility:CreateModule({
 		Name = 'Scaffold',
 		Function = function(callback)
 			if label then
@@ -4910,7 +5236,7 @@ run(function()
 				label.RichText = true
 				label.Font = Enum.Font.Arial
 				label.Visible = Scaffold.Enabled
-				label.Parent = vain.gui
+				label.Parent = vape.gui
 			else
 				label:Destroy()
 				label = nil
@@ -4923,7 +5249,7 @@ run(function()
 	local ShopTierBypass
 	local tiered, nexttier = {}, {}
 	
-	ShopTierBypass = vain.Categories.Utility:CreateModule({
+	ShopTierBypass = vape.Categories.Utility:CreateModule({
 		Name = 'ShopTierBypass',
 		Function = function(callback)
 			if callback then
@@ -4973,8 +5299,8 @@ run(function()
 	end
 	
 	local function staffFunction(plr, checktype)
-		if not vain.Loaded then
-			repeat task.wait() until vain.Loaded
+		if not vape.Loaded then
+			repeat task.wait() until vape.Loaded
 		end
 	
 		notif('StaffDetector', 'Staff Detected ('..checktype..'): '..plr.Name..' ('..plr.UserId..')', 60, 'alert')
@@ -4986,7 +5312,7 @@ run(function()
 	
 		if Mode.Value == 'Uninject' then
 			task.spawn(function()
-				vain:Uninject()
+				vape:Uninject()
 			end)
 			game:GetService('StarterGui'):SetCore('SendNotification', {
 				Title = 'StaffDetector',
@@ -4996,14 +5322,14 @@ run(function()
 		elseif Mode.Value == 'Requeue' then
 			bedwars.QueueController:joinQueue(store.queueType)
 		elseif Mode.Value == 'Profile' then
-			vain.Save = function() end
-			if vain.Profile ~= Profile.Value then
-				vain:Load(true, Profile.Value)
+			vape.Save = function() end
+			if vape.Profile ~= Profile.Value then
+				vape:Load(true, Profile.Value)
 			end
 		elseif Mode.Value == 'AutoConfig' then
 			local safe = {'AutoClicker', 'Reach', 'Sprint', 'HitFix', 'StaffDetector'}
-			vain.Save = function() end
-			for i, v in vain.Modules do
+			vape.Save = function() end
+			for i, v in vape.Modules do
 				if not (table.find(safe, i) or v.Category == 'Render') then
 					if v.Enabled then
 						v:Toggle()
@@ -5067,14 +5393,14 @@ run(function()
 				plr:GetAttributeChangedSignal('ClanTag'):Wait()
 			end
 	
-			if table.find(blacklistedclans, plr:GetAttribute('ClanTag')) and vain.Loaded and Clans.Enabled then
+			if table.find(blacklistedclans, plr:GetAttribute('ClanTag')) and vape.Loaded and Clans.Enabled then
 				connection:Disconnect()
 				staffFunction(plr, 'blacklisted_clan_'..plr:GetAttribute('ClanTag'):lower())
 			end
 		end
 	end
 	
-	StaffDetector = vain.Categories.Utility:CreateModule({
+	StaffDetector = vape.Categories.Utility:CreateModule({
 		Name = 'StaffDetector',
 		Function = function(callback)
 			if callback then
@@ -5116,22 +5442,22 @@ run(function()
 	})
 	
 	task.spawn(function()
-		repeat task.wait(1) until vain.Loaded or vain.Loaded == nil
-		if vain.Loaded and not StaffDetector.Enabled then
+		repeat task.wait(1) until vape.Loaded or vape.Loaded == nil
+		if vape.Loaded and not StaffDetector.Enabled then
 			StaffDetector:Toggle()
 		end
 	end)
 end)
 
 run(function()
-	TrapDisabler = vain.Categories.Utility:CreateModule({
+	TrapDisabler = vape.Categories.Utility:CreateModule({
 		Name = 'TrapDisabler',
 		Tooltip = 'Disables Snap Traps'
 	})
 end)
 
 run(function()
-	vain.Categories.World:CreateModule({
+	vape.Categories.World:CreateModule({
 		Name = 'Anti-AFK',
 		Function = function(callback)
 			if callback then
@@ -5163,7 +5489,7 @@ run(function()
 		return bedwars.BlockController:getBlockPosition(pos) * 3
 	end
 	
-	AutoSuffocate = vain.Categories.World:CreateModule({
+	AutoSuffocate = vape.Categories.World:CreateModule({
 		Name = 'AutoSuffocate',
 		Function = function(callback)
 			if callback then
@@ -5247,7 +5573,7 @@ run(function()
 		end
 	end
 	
-	AutoTool = vain.Categories.World:CreateModule({
+	AutoTool = vape.Categories.World:CreateModule({
 		Name = 'AutoTool',
 		Function = function(callback)
 			if callback then
@@ -5277,7 +5603,7 @@ run(function()
 	local Color = {}
 	local Reference = {}
 	local Folder = Instance.new('Folder')
-	Folder.Parent = vain.holder
+	Folder.Parent = vape.holder
 	
 	local function scanSide(self, start, tab)
 		for _, side in sides do
@@ -5357,15 +5683,15 @@ run(function()
 		end
 	end
 	
-	BedPlates = vain.Categories.World:CreateModule({
+	BedPlates = vape.Categories.World:CreateModule({
 		Name = 'BedPlates',
 		Function = function(callback)
 			if callback then
 				for _, v in collectionService:GetTagged('bed') do
 					task.spawn(Added, v)
 				end
-				BedPlates:Clean(vainEvents.PlaceBlockEvent.Event:Connect(refreshNear))
-				BedPlates:Clean(vainEvents.BreakBlockEvent.Event:Connect(refreshNear))
+				BedPlates:Clean(vapeEvents.PlaceBlockEvent.Event:Connect(refreshNear))
+				BedPlates:Clean(vapeEvents.BreakBlockEvent.Event:Connect(refreshNear))
 				BedPlates:Clean(collectionService:GetInstanceAddedSignal('bed'):Connect(Added))
 				BedPlates:Clean(collectionService:GetInstanceRemovedSignal('bed'):Connect(function(v)
 					if Reference[v] then
@@ -5447,7 +5773,7 @@ run(function()
 		return positions
 	end
 	
-	BedProtector = vain.Categories.World:CreateModule({
+	BedProtector = vape.Categories.World:CreateModule({
 		Name = 'BedProtector',
 		Function = function(callback)
 			if callback then
@@ -5527,7 +5853,7 @@ run(function()
 						Size = UDim2.new(1, 89, 1, 52),
 						Position = UDim2.fromOffset(-48, -31),
 						BackgroundTransparency = 1,
-						Image = getvainasset('vain/assets/new/blur.png'),
+						Image = getvapeasset('vain/assets/new/blur.png'),
 						ScaleType = Enum.ScaleType.Slice,
 						SliceCenter = Rect.new(52, 31, 261, 502)
 					}),
@@ -5623,7 +5949,7 @@ run(function()
 		return false
 	end
 	
-	Breaker = vain.Categories.World:CreateModule({
+	Breaker = vape.Categories.World:CreateModule({
 		Name = 'Breaker',
 		Function = function(callback)
 			if callback then
@@ -5778,7 +6104,7 @@ run(function()
 		end
 	end
 	
-	ChestSteal = vain.Categories.World:CreateModule({
+	ChestSteal = vape.Categories.World:CreateModule({
 		Name = 'ChestSteal',
 		Function = function(callback)
 			if callback then
@@ -5996,7 +6322,7 @@ run(function()
 		end
 	end
 	
-	Schematica = vain.Categories.World:CreateModule({
+	Schematica = vape.Categories.World:CreateModule({
 		Name = 'Schematica',
 		Function = function(callback)
 			if callback then
@@ -6061,7 +6387,7 @@ run(function()
 	local Targets
 	local Range
 	
-	ArmorSwitch = vain.Categories.Inventory:CreateModule({
+	ArmorSwitch = vape.Categories.Inventory:CreateModule({
 		Name = 'ArmorSwitch',
 		Function = function(callback)
 			if callback then
@@ -6082,7 +6408,7 @@ run(function()
 									item = store.inventory.inventory.armor[i + 1] == 'empty' and state and getBestArmor(i) or nil,
 									armorSlot = i
 								})
-								vainEvents.InventoryChanged.Event:Wait()
+								vapeEvents.InventoryChanged.Event:Wait()
 							end
 						end
 						task.wait(0.1)
@@ -6095,7 +6421,7 @@ run(function()
 							item = store.inventory.inventory.armor[i + 1] == 'empty' and getBestArmor(i) or nil,
 							armorSlot = i
 						})
-						vainEvents.InventoryChanged.Event:Wait()
+						vapeEvents.InventoryChanged.Event:Wait()
 					end
 				end
 			end
@@ -6195,7 +6521,7 @@ run(function()
 		end
 	end
 	
-	AutoBank = vain.Categories.Inventory:CreateModule({
+	AutoBank = vape.Categories.Inventory:CreateModule({
 		Name = 'AutoBank',
 		Function = function(callback)
 			if callback then
@@ -6205,7 +6531,7 @@ run(function()
 				UI.Position = UDim2.fromOffset(0, -240)
 				UI.BackgroundTransparency = 1
 				UI.Visible = UIToggle.Enabled
-				UI.Parent = vain.gui
+				UI.Parent = vape.gui
 				AutoBank:Clean(UI)
 				local Sort = Instance.new('UIListLayout')
 				Sort.FillDirection = Enum.FillDirection.Horizontal
@@ -6402,7 +6728,7 @@ run(function()
 		return bought
 	end
 	
-	AutoBuy = vain.Categories.Inventory:CreateModule({
+	AutoBuy = vape.Categories.Inventory:CreateModule({
 		Name = 'AutoBuy',
 		Function = function(callback)
 			if callback then
@@ -6410,7 +6736,7 @@ run(function()
 				if BedwarsCheck.Enabled and not store.queueType:find('bedwars') then return end
 	
 				local lastupgrades
-				AutoBuy:Clean(vainEvents.InventoryAmountChanged.Event:Connect(function()
+				AutoBuy:Clean(vapeEvents.InventoryAmountChanged.Event:Connect(function()
 					if (npctick - tick()) > 1 then npctick = tick() end
 				end))
 	
@@ -6628,12 +6954,12 @@ run(function()
 		end
 	end
 	
-	AutoConsume = vain.Categories.Inventory:CreateModule({
+	AutoConsume = vape.Categories.Inventory:CreateModule({
 		Name = 'AutoConsume',
 		Function = function(callback)
 			if callback then
-				AutoConsume:Clean(vainEvents.InventoryAmountChanged.Event:Connect(consumeCheck))
-				AutoConsume:Clean(vainEvents.AttributeChanged.Event:Connect(function(attribute)
+				AutoConsume:Clean(vapeEvents.InventoryAmountChanged.Event:Connect(consumeCheck))
+				AutoConsume:Clean(vapeEvents.AttributeChanged.Event:Connect(function(attribute)
 					if attribute:find('Shield') or attribute:find('Health') or attribute == 'StatusEffect_speed' then
 						consumeCheck(attribute)
 					end
@@ -6680,7 +7006,7 @@ run(function()
 		window.BackgroundColor3 = uipallet.Main
 		window.AnchorPoint = Vector2.new(0.5, 0.5)
 		window.Visible = false
-		window.Parent = vain.gui.ScaledGui
+		window.Parent = vape.gui.ScaledGui
 		local title = Instance.new('TextLabel')
 		title.Name = 'Title'
 		title.Size = UDim2.new(1, -10, 0, 20)
@@ -6714,7 +7040,7 @@ run(function()
 		close.Position = UDim2.new(1, -35, 0, 9)
 		close.BackgroundColor3 = Color3.new(1, 1, 1)
 		close.BackgroundTransparency = 1
-		close.Image = getvainasset('vain/assets/new/close.png')
+		close.Image = getvapeasset('vain/assets/new/close.png')
 		close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 		close.ImageTransparency = 0.5
 		close.AutoButtonColor = false
@@ -6733,7 +7059,7 @@ run(function()
 		end)
 		close.MouseButton1Click:Connect(function()
 			window.Visible = false
-			vain.gui.ScaledGui.ClickGui.Visible = true
+			vape.gui.ScaledGui.ClickGui.Visible = true
 		end)
 		local closecorner = Instance.new('UICorner')
 		closecorner.CornerRadius = UDim.new(1, 0)
@@ -6828,7 +7154,7 @@ run(function()
 		searchicon.Size = UDim2.fromOffset(14, 14)
 		searchicon.Position = UDim2.new(1, -26, 0, 8)
 		searchicon.BackgroundTransparency = 1
-		searchicon.Image = getvainasset('vain/assets/new/search.png')
+		searchicon.Image = getvapeasset('vain/assets/new/search.png')
 		searchicon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		searchicon.Parent = searchbkg
 		local children = Instance.new('ScrollingFrame')
@@ -6848,12 +7174,12 @@ run(function()
 		windowlist.CellPadding = UDim2.fromOffset(4, 3)
 		windowlist.Parent = children
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vain.ThreadFix then
+			if vape.ThreadFix then
 				setthreadidentity(8)
 			end
-			children.CanvasSize = UDim2.fromOffset(0, windowlist.AbsoluteContentSize.Y / vain.guiscale.Scale)
+			children.CanvasSize = UDim2.fromOffset(0, windowlist.AbsoluteContentSize.Y / vape.guiscale.Scale)
 		end)
-		table.insert(vain.Windows, window)
+		table.insert(vape.Windows, window)
 	
 		local function createitem(id, image)
 			local slotbkg = Instance.new('TextButton')
@@ -6917,8 +7243,8 @@ run(function()
 		return window
 	end
 	
-	vain.Components.HotbarList = function(optionsettings, children, api)
-		if vain.ThreadFix then
+	vape.Components.HotbarList = function(optionsettings, children, api)
+		if vape.ThreadFix then
 			setthreadidentity(8)
 		end
 		local optionapi = {
@@ -6969,7 +7295,7 @@ run(function()
 		textbuttonicon.Position = UDim2.fromScale(0.5, 0.5)
 		textbuttonicon.AnchorPoint = Vector2.new(0.5, 0.5)
 		textbuttonicon.BackgroundTransparency = 1
-		textbuttonicon.Image = getvainasset('vain/assets/new/add.png')
+		textbuttonicon.Image = getvapeasset('vain/assets/new/add.png')
 		textbuttonicon.ImageColor3 = Color3.fromHSV(0.46, 0.96, 0.52)
 		textbuttonicon.Parent = textbutton
 		local childrenlist = Instance.new('Frame')
@@ -6983,10 +7309,10 @@ run(function()
 		windowlist.Padding = UDim.new(0, 3)
 		windowlist.Parent = childrenlist
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vain.ThreadFix then
+			if vape.ThreadFix then
 				setthreadidentity(8)
 			end
-			hotbarlist.Size = UDim2.fromOffset(220, math.min(43 + windowlist.AbsoluteContentSize.Y / vain.guiscale.Scale, 603))
+			hotbarlist.Size = UDim2.fromOffset(220, math.min(43 + windowlist.AbsoluteContentSize.Y / vape.guiscale.Scale, 603))
 		end)
 		textbutton.MouseButton1Click:Connect(function()
 			optionapi:AddHotbar()
@@ -7043,7 +7369,7 @@ run(function()
 			hotbar.MouseButton1Click:Connect(function()
 				local ind = table.find(optionapi.Hotbars, hotbardata)
 				if ind == optionapi.Selected then
-					vain.gui.ScaledGui.ClickGui.Visible = false
+					vape.gui.ScaledGui.ClickGui.Visible = false
 					optionapi.Window.Visible = true
 					for i = 1, 9 do
 						optionapi.Window['Slot'..i].ImageLabel.Image = hotbardata.Hotbar[tostring(i)] and bedwars.getIcon({itemType = hotbardata.Hotbar[tostring(i)]}, true) or ''
@@ -7062,7 +7388,7 @@ run(function()
 			close.Position = UDim2.new(1, -23, 0, 6)
 			close.BackgroundColor3 = Color3.new(1, 1, 1)
 			close.BackgroundTransparency = 1
-			close.Image = getvainasset('vain/assets/new/closemini.png')
+			close.Image = getvapeasset('vain/assets/new/closemini.png')
 			close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 			close.ImageTransparency = 0.5
 			close.AutoButtonColor = false
@@ -7162,7 +7488,7 @@ run(function()
 	
 	local function dispatch(...)
 		bedwars.Store:dispatch(...)
-		vainEvents.InventoryChanged.Event:Wait()
+		vapeEvents.InventoryChanged.Event:Wait()
 	end
 	
 	local function sortCallback()
@@ -7216,7 +7542,7 @@ run(function()
 		Active = false
 	end
 	
-	AutoHotbar = vain.Categories.Inventory:CreateModule({
+	AutoHotbar = vape.Categories.Inventory:CreateModule({
 		Name = 'AutoHotbar',
 		Function = function(callback)
 			if callback then
@@ -7226,7 +7552,7 @@ run(function()
 					return
 				end
 	
-				AutoHotbar:Clean(vainEvents.InventoryAmountChanged.Event:Connect(sortCallback))
+				AutoHotbar:Clean(vapeEvents.InventoryAmountChanged.Event:Connect(sortCallback))
 			end
 		end,
 		Tooltip = 'Automatically arranges hotbar to your liking.'
@@ -7249,7 +7575,7 @@ run(function()
 	local Value
 	local oldclickhold, oldshowprogress
 	
-	local FastConsume = vain.Categories.Inventory:CreateModule({
+	local FastConsume = vape.Categories.Inventory:CreateModule({
 		Name = 'FastConsume',
 		Function = function(callback)
 			if callback then
@@ -7320,7 +7646,7 @@ end)
 run(function()
 	local FastDrop
 	
-	FastDrop = vain.Categories.Inventory:CreateModule({
+	FastDrop = vape.Categories.Inventory:CreateModule({
 		Name = 'FastDrop',
 		Function = function(callback)
 			if callback then
@@ -7344,11 +7670,11 @@ run(function()
 	local List
 	local NameToId = {}
 	
-	BedBreakEffect = vain.Legit:CreateModule({
+	BedBreakEffect = vape.Legit:CreateModule({
 		Name = 'Bed Break Effect',
 		Function = function(callback)
 			if callback then
-	            BedBreakEffect:Clean(vainEvents.BedwarsBedBreak.Event:Connect(function(data)
+	            BedBreakEffect:Clean(vapeEvents.BedwarsBedBreak.Event:Connect(function(data)
 	                firesignal(bedwars.Client:Get('BedBreakEffectTriggered').instance.OnClientEvent, {
 	                    player = data.player,
 	                    position = data.bedBlockPosition * 3,
@@ -7374,7 +7700,7 @@ run(function()
 end)
 
 run(function()
-	vain.Legit:CreateModule({
+	vape.Legit:CreateModule({
 		Name = 'Clean Kit',
 		Function = function(callback)
 			if callback then
@@ -7393,7 +7719,7 @@ run(function()
 	local old
 	local Image
 	
-	local Crosshair = vain.Legit:CreateModule({
+	local Crosshair = vape.Legit:CreateModule({
 		Name = 'Crosshair',
 		Function = function(callback)
 			if callback then
@@ -7438,7 +7764,7 @@ run(function()
 	tab = suc and tab or {}
 	local oldvalues, oldfont = {}
 	
-	DamageIndicator = vain.Legit:CreateModule({
+	DamageIndicator = vape.Legit:CreateModule({
 		Name = 'Damage Indicator',
 		Function = function(callback)
 			if callback then
@@ -7526,7 +7852,7 @@ run(function()
 	local Value
 	local old, old2
 	
-	FOV = vain.Legit:CreateModule({
+	FOV = vape.Legit:CreateModule({
 		Name = 'FOV',
 		Function = function(callback)
 			if callback then
@@ -7560,7 +7886,7 @@ run(function()
 	local Visualizer
 	local effects, util = {}, {}
 	
-	FPSBoost = vain.Legit:CreateModule({
+	FPSBoost = vape.Legit:CreateModule({
 		Name = 'FPS Boost',
 		Function = function(callback)
 			if callback then
@@ -7637,7 +7963,7 @@ run(function()
 	local Color
 	local done = {}
 	
-	HitColor = vain.Legit:CreateModule({
+	HitColor = vape.Legit:CreateModule({
 		Name = 'Hit Color',
 		Function = function(callback)
 			if callback then 
@@ -7671,7 +7997,7 @@ run(function()
 end)
 
 run(function()
-	vain.Legit:CreateModule({
+	vape.Legit:CreateModule({
 		Name = 'HitFix',
 		Function = function(callback)
 			debug.setconstant(bedwars.SwordController.swingSwordAtMouse, 23, callback and 'raycast' or 'Raycast')
@@ -7688,7 +8014,7 @@ run(function()
 	local HotbarApp = getRoactRender(require(lplr.PlayerScripts.TS.controllers.global.hotbar.ui['hotbar-app']).HotbarApp.render)
 	local old, new = {}, {}
 	
-	vain:Clean(function()
+	vape:Clean(function()
 		for _, v in new do
 			table.clear(v)
 		end
@@ -7719,7 +8045,7 @@ run(function()
 		end
 	end
 	
-	Interface = vain.Legit:CreateModule({
+	Interface = vape.Legit:CreateModule({
 		Name = 'Interface',
 		Function = function(callback)
 			for i, v in (callback and new or old) do
@@ -7877,7 +8203,7 @@ run(function()
 		end
 	}
 	
-	KillEffect = vain.Legit:CreateModule({
+	KillEffect = vape.Legit:CreateModule({
 		Name = 'Kill Effect',
 		Function = function(callback)
 			if callback then
@@ -7942,7 +8268,7 @@ run(function()
 	local ReachDisplay
 	local label
 	
-	ReachDisplay = vain.Legit:CreateModule({
+	ReachDisplay = vape.Legit:CreateModule({
 		Name = 'Reach Display',
 		Function = function(callback)
 			if callback then
@@ -8031,7 +8357,7 @@ run(function()
 		end
 	end
 	
-	SongBeats = vain.Legit:CreateModule({
+	SongBeats = vape.Legit:CreateModule({
 		Name = 'Song Beats',
 		Function = function(callback)
 			if callback then
@@ -8108,7 +8434,7 @@ run(function()
 	local soundlist = {}
 	local old
 	
-	SoundChanger = vain.Legit:CreateModule({
+	SoundChanger = vape.Legit:CreateModule({
 		Name = 'SoundChanger',
 		Function = function(callback)
 			if callback then
@@ -8153,7 +8479,7 @@ run(function()
 	local old, new = {}, {}
 	local oldkillfeed
 	
-	vain:Clean(function()
+	vape:Clean(function()
 		for _, v in new do
 			table.clear(v)
 		end
@@ -8185,7 +8511,7 @@ run(function()
 		end
 	end
 	
-	UICleanup = vain.Legit:CreateModule({
+	UICleanup = vape.Legit:CreateModule({
 		Name = 'UI Cleanup',
 		Function = function(callback)
 			for i, v in (callback and new or old) do
@@ -8305,7 +8631,7 @@ run(function()
 	local Rots = {}
 	local old, oldc1
 	
-	Viewmodel = vain.Legit:CreateModule({
+	Viewmodel = vape.Legit:CreateModule({
 		Name = 'Viewmodel',
 		Function = function(callback)
 			local viewmodel = gameCamera:FindFirstChild('Viewmodel')
@@ -8406,11 +8732,11 @@ run(function()
 	local List
 	local NameToId = {}
 	
-	WinEffect = vain.Legit:CreateModule({
+	WinEffect = vape.Legit:CreateModule({
 		Name = 'WinEffect',
 		Function = function(callback)
 			if callback then
-				WinEffect:Clean(vainEvents.MatchEndEvent.Event:Connect(function()
+				WinEffect:Clean(vapeEvents.MatchEndEvent.Event:Connect(function()
 					for i, v in getconnections(bedwars.Client:Get('WinEffectTriggered').instance.OnClientEvent) do
 						if v.Function then
 							v.Function({
@@ -8434,4 +8760,56 @@ run(function()
 		Name = 'Effects',
 		List = WinEffectName
 	})
+end)
+
+run(function()
+	local Zoom
+	local FOV
+	local ZoomKey
+	local held = false
+	local normalFOV
+	
+	local function updateFOV()
+	if not Zoom.Enabled then return end
+	local target = held and FOV.Value or normalFOV
+	pcall(function()
+	bedwars.FovController:setFOV(target)
+	end)
+	end
+	
+	Zoom = vape.Categories.Legit:CreateModule({
+	Name = 'Zoom',
+	Function = function(callback)
+	if callback then
+	normalFOV = bedwars.FovController:getFOV()
+	Zoom:Clean(runService.RenderStepped:Connect(updateFOV))
+	else
+	held = false
+	if normalFOV then
+	pcall(function()
+	bedwars.FovController:setFOV(normalFOV)
+	end)
+	end
+	end
+	end,
+	Tooltip = 'Hold a key to zoom your camera like a scope'
+	})
+	
+	FOV = Zoom:CreateSlider({
+	Name = 'Zoom FOV',
+	Min = 10,
+	Max = 80,
+	Default = 35
+	})
+	
+	ZoomKey = Zoom:CreateBind({
+	Name = 'Zoom Key',
+	Default = {'LeftAlt'},
+	Hold = true
+	})
+	
+	ZoomKey.Triggered:Connect(function(isDown)
+	held = isDown
+	updateFOV()
+	end)
 end)

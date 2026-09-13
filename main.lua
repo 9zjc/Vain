@@ -1,11 +1,11 @@
 repeat task.wait() until game:IsLoaded()
-if shared.vain then shared.vain:Uninject() end
+if shared.vape then shared.vape:Uninject() end
 
-local vain
+local vape
 local loadstring = function(...)
 	local res, err = loadstring(...)
-	if err and vain then
-		vain:CreateNotification('Vain', 'Failed to load : '..err, 30, 'alert')
+	if err and vape then
+		vape:CreateNotification('Vain', 'Failed to load : '..err, 30, 'alert')
 	end
 	return res
 end
@@ -22,8 +22,7 @@ end
 local playersService = cloneref(game:GetService('Players'))
 
 local function downloadFile(path, func)
-	local forceRefresh = path == "vain/guis/new.lua" or path == "vain/games/universal.lua" or path == ("vain/games/" .. tostring(game.PlaceId) .. ".lua")
- if forceRefresh or not isfile(path) then
+	if not isfile(path) then
 		local suc, res = pcall(function()
 			return game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/'..select(1, path:gsub('vain/', '')), true)
 		end)
@@ -31,7 +30,7 @@ local function downloadFile(path, func)
 			error(res)
 		end
 		if path:find('.lua') then
-			res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vain updates.\n'..res
+			res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..res
 		end
 		writefile(path, res)
 	end
@@ -39,42 +38,42 @@ local function downloadFile(path, func)
 end
 
 local function finishLoading()
-	vain.Init = nil
-	vain:Load()
+	vape.Init = nil
+	vape:Load()
 	task.spawn(function()
 		repeat
-			vain:Save()
+			vape:Save()
 			task.wait(10)
-		until not vain.Loaded
+		until not vape.Loaded
 	end)
 
 	local teleportedServers
-	vain:Clean(playersService.LocalPlayer.OnTeleport:Connect(function()
-		if (not teleportedServers) and (not shared.VainIndependent) then
+	vape:Clean(playersService.LocalPlayer.OnTeleport:Connect(function()
+		if (not teleportedServers) and (not shared.VapeIndependent) then
 			teleportedServers = true
 			local teleportScript = [[
-				shared.vainreload = true
-				if shared.VainDeveloper then
+				shared.vapereload = true
+				if shared.VapeDeveloper then
 					loadstring(readfile('vain/loader.lua'), 'loader')()
 				else
 					loadstring(game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/loader.lua', true), 'loader')()
 				end
 			]]
-			if shared.VainDeveloper then
-				teleportScript = 'shared.VainDeveloper = true\n'..teleportScript
+			if shared.VapeDeveloper then
+				teleportScript = 'shared.VapeDeveloper = true\n'..teleportScript
 			end
-			if shared.VainCustomProfile then
-				teleportScript = 'shared.VainCustomProfile = "'..shared.VainCustomProfile..'"\n'..teleportScript
+			if shared.VapeCustomProfile then
+				teleportScript = 'shared.VapeCustomProfile = "'..shared.VapeCustomProfile..'"\n'..teleportScript
 			end
-			vain:Save()
+			vape:Save()
 			queue_on_teleport(teleportScript)
 		end
 	end))
 
-	if not shared.vainreload then
-		if not vain.Categories then return end
-		if vain.Settings.GUI.Options['GUI bind indicator'].Enabled then
-			vain:CreateNotification('Finished Loading', vain.VainButton and 'Press the button in the top right to open GUI' or 'Press '..table.concat(vain.GUIBind.Keys, ' + '):upper()..' to open GUI', 5)
+	if not shared.vapereload then
+		if not vape.Categories then return end
+		if vape.Settings.GUI.Options['GUI bind indicator'].Enabled then
+			vape:CreateNotification('Finished Loading', vape.VapeButton and 'Press the button in the top right to open GUI' or 'Press '..table.concat(vape.GUIBind.Keys, ' + '):upper()..' to open GUI', 5)
 		end
 	end
 end
@@ -87,15 +86,15 @@ local gui = 'new'--readfile('vain/profiles/gui.txt')
 if not isfolder('vain/assets/'..gui) then
 	makefolder('vain/assets/'..gui)
 end
-vain = loadstring(downloadFile('vain/guis/'..gui..'.lua'), 'gui')()
-shared.vain = vain
+vape = loadstring(downloadFile('vain/guis/'..gui..'.lua'), 'gui')()
+shared.vape = vape
 
-if not shared.VainIndependent then
+if not shared.VapeIndependent then
 	loadstring(downloadFile('vain/games/universal.lua'), 'universal')()
 	if isfile('vain/games/'..game.PlaceId..'.lua') then
 		loadstring(readfile('vain/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
 	else
-		if not shared.VainDeveloper then
+		if not shared.VapeDeveloper then
 			local success, data = pcall(downloadFile, 'vain/games/'..game.PlaceId..'.lua')
 			if success then
 				loadstring(data, tostring(game.PlaceId))(...)
@@ -104,6 +103,6 @@ if not shared.VainIndependent then
 	end
 	finishLoading()
 else
-	vain.Init = finishLoading
-	return vain
+	vape.Init = finishLoading
+	return vape
 end
