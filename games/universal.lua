@@ -1,3 +1,5 @@
+local vain = shared.vape or shared.vain
+
 local nativeLoadstring = loadstring
 local loadstring = function(...)
 	local res, err = nativeLoadstring(...)
@@ -59,7 +61,6 @@ end
 local gameCamera = workspace.CurrentCamera or workspace:FindFirstChildWhichIsA('Camera')
 local lplr = playersService.LocalPlayer
 
-local vain = shared.vain
 local tween = vain.Libraries.tween
 local targetinfo = vain.Libraries.targetinfo
 local getfontbounds = vain.Libraries.getfontbounds
