@@ -2,9 +2,10 @@ local CollectionService
 
 local license = ... or {}
 local REPO = "https://raw.githubusercontent.com/9zjc/Vain/main/"
+local CACHE_BUSTER = "?v=0920191"
 
 local function fetchModule(path)
-    return game:HttpGet(REPO .. path, true)
+    return game:HttpGet(REPO .. path .. CACHE_BUSTER, true)
 end
 
 local BRANCH = "main"
