@@ -985,9 +985,10 @@ run(function()
 							Origin = gameCamera.CFrame.Position
 						})
 	
-						if ent then
+						if ent and ent[Part.Value] then
 							local facing = gameCamera.CFrame.LookVector
-							local new = (ent[Part.Value].Position - gameCamera.CFrame.Position).Unit
+							local direction = ent[Part.Value].Position - gameCamera.CFrame.Position
+							local new = direction.Magnitude > 0.001 and direction.Unit or Vector3.zero
 							new = new == new and new or Vector3.zero
 	
 							if ShowTarget.Enabled then
