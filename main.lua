@@ -22,7 +22,8 @@ end
 local playersService = cloneref(game:GetService('Players'))
 
 local function downloadFile(path, func)
-	if not isfile(path) then
+	local forceRefresh = path == "vain/guis/new.lua" or path == "vain/games/universal.lua" or path == ("vain/games/" .. tostring(game.PlaceId) .. ".lua")
+ if forceRefresh or not isfile(path) then
 		local suc, res = pcall(function()
 			return game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/'..select(1, path:gsub('vain/', '')), true)
 		end)
