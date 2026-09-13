@@ -2,12 +2,13 @@ repeat task.wait() until game:IsLoaded()
 if shared.vape then shared.vape:Uninject() end
 
 local vape
+local nativeLoadstring = loadstring
 local loadstring = function(...)
-	local res, err = loadstring(...)
+	local res, err = nativeLoadstring(...)
 	if err and vape then
 		vape:CreateNotification('Vain', 'Failed to load : '..err, 30, 'alert')
 	end
-	return res
+	return res, err
 end
 local queue_on_teleport = queue_on_teleport or function() end
 local isfile = isfile or function(file)
@@ -116,7 +117,11 @@ if not shared.VapeIndependent then
 	local gameSuccess, gameData = pcall(downloadFile, gamePath)
 	if gameSuccess and gameData then
 		local moduleSuccess, moduleError = pcall(function()
-			loadstring(gameData, tostring(game.PlaceId))(...)
+			local moduleChunk, compileError = loadstring(gameData, tostring(game.PlaceId))
+			if not moduleChunk then
+				error(compileError)
+			end
+			moduleChunk()
 		end)
 		if not moduleSuccess and vape.CreateNotification then
 			vape:CreateNotification('Vain', 'Game module failed: '..tostring(moduleError), 15, 'alert')
