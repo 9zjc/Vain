@@ -47,6 +47,18 @@ local TextGUI
 local scale = {Scale = 1}
 local gui
 
+local function clearDownloader()
+	local downloader = vain.Downloader
+	if downloader then
+		pcall(function() downloader:Destroy() end)
+		vain.Downloader = nil
+	end
+end
+
+function vain:ClearLoadingState()
+	clearDownloader()
+end
+
 local isfile = isfile or function(file)
 	local success, data = pcall(function()
 		return readfile(file)
@@ -179,7 +191,7 @@ do
 	}
 
 	local function createDownloader(text)
-		if vain.Loaded ~= true then
+		if vain.Loaded ~= true and vain.gui then
 			local downloader = vain.Downloader
 			if not downloader then
 				downloader = Instance.new('TextLabel')
@@ -189,10 +201,12 @@ do
 				downloader.TextColor3 = Color3.new(1, 1, 1)
 				downloader.TextSize = 20
 				downloader.TextStrokeTransparency = 0
+				downloader.ZIndex = 1000
 				downloader.Parent = vain.gui
 				vain.Downloader = downloader
 			end
 
+			downloader.Visible = true
 			downloader.Text = 'Downloading '..text
 		end
 	end
@@ -206,6 +220,7 @@ do
 			end)
 
 			if not success or data == '404: Not Found' then
+				clearDownloader()
 				error(data)
 			end
 
@@ -756,10 +771,7 @@ function vain:Load(skipgui, profile)
 		self:CreateNotification('Profile swap to <font color="#FFAA00">'..self.Profile..'</font>', toggleCount..' modules enabled', 3)
 	end
 
-	if self.Downloader then
-		self.Downloader:Destroy()
-		self.Downloader = nil
-	end
+	clearDownloader()
 
 	self.Loaded = canSave
 
@@ -2204,23 +2216,39 @@ function vain:LoadGUI()
 		end
 	end))
 	
-	vain:Clean(vain.GUIBind.Triggered:Connect(function()
-		if vain.ThreadFix then
+	function vain:ToggleGUI(visible)
+		if not clickgui then return end
+		if visible == nil then
+			visible = not clickgui.Visible
+		end
+
+		if self.ThreadFix then
 			setthreadidentity(8)
 		end
-	
+
 		for _, window in self.Windows do
 			window.Visible = false
 		end
-	
+
+		clickgui.Visible = visible
+		if self.Downloader then
+			self.Downloader.Visible = visible
+		end
+		if tooltip then
+			tooltip.Visible = false
+		end
+
 		for _, module in self.Modules do
 			if module.Bind.Mobile then
-				module.Bind.Mobile.Visible = clickgui.Visible
+				module.Bind.Mobile.Visible = not visible
 			end
 		end
-	
-		clickgui.Visible = not clickgui.Visible
-		vain:BlurCheck()
+
+		self:BlurCheck()
+	end
+
+	vain:Clean(vain.GUIBind.Triggered:Connect(function()
+		self:ToggleGUI()
 	end))
 	
 	vain:Clean(inputService.InputBegan:Connect(function(input)
@@ -2368,6 +2396,10 @@ function vain:SortCategories()
 end
 
 function vain:Uninject()
+	clearDownloader()
+	if clickgui then
+		clickgui.Visible = false
+	end
 	self:Save()
 	self.Loaded = nil
 
@@ -5977,9 +6009,7 @@ components = {
 						setthreadidentity(8)
 					end
 		
-					clickgui.Visible = false
-					tooltip.Visible = false
-					vain:BlurCheck()
+					vain:ToggleGUI(false)
 					for _, module in vain.Modules do
 						if module.Bind.Mobile then
 							module.Bind.Mobile.Visible = true
