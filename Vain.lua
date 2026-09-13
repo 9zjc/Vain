@@ -32,14 +32,14 @@ end
 
 ensureCacheTree()
 
-local vape = shared.vape or _G.vape
-if not vape then
-    vape = loadstring(fetchModule("guis/new.lua"), "gui")(license)
-    shared.vape = vape
-    _G.vape = vape
+local vain = shared.vain or _G.vain
+if not vain then
+    vain = loadstring(fetchModule("guis/new.lua"), "gui")(license)
+    shared.vain = vain
+    _G.vain = vain
 end
 
-if not shared.VapeIndependent and not getgenv().bedwars then
+if not shared.VainIndependent and not getgenv().bedwars then
     local okUniversal, errUniversal = pcall(function()
         loadstring(fetchModule("games/universal.lua"), "universal")(license)
     end)
@@ -65,7 +65,7 @@ local bedwars = getgenv().bedwars
 local store = getgenv().store
 if not bedwars then
     warn("[Vain] bedwars is not defined; PlaceId=" .. tostring(game.PlaceId)
-        .. " vape.Place=" .. tostring(vape and vape.Place))
+        .. " vain.Place=" .. tostring(vain and vain.Place))
     return
 end
 
@@ -80,8 +80,8 @@ local collectionService = game:GetService("CollectionService")
 local teleportService = game:GetService("TeleportService")
 
 local function notify(title, text, duration, kind)
-    if vape and vape.CreateNotification then
-        vape:CreateNotification(title or "Vain", text or "", duration or 10, kind or "alert")
+    if vain and vain.CreateNotification then
+        vain:CreateNotification(title or "Vain", text or "", duration or 10, kind or "alert")
     end
 end
 
@@ -123,7 +123,7 @@ local TextChatService, CollectionService, ContextActionService, ProximityPromptS
 local GuiService, CoreGui, StarterGui
 local currentCamera, localPlayer, entity, targetinfo, prediction
 
-if vape.Place == 6872274481 then
+if vain.Place == 6872274481 then
     Players = cloneref(game:GetService("Players"))
     ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
     RunService = cloneref(game:GetService("RunService"))
@@ -140,9 +140,9 @@ if vape.Place == 6872274481 then
 
     currentCamera = workspace.CurrentCamera
     localPlayer = Players.LocalPlayer
-    entity = vape.Libraries.entity
-    targetinfo = vape.Libraries.targetinfo
-    prediction = vape.Libraries.prediction
+    entity = vain.Libraries.entity
+    targetinfo = vain.Libraries.targetinfo
+    prediction = vain.Libraries.prediction
 end
 local BYTE_TO_CHAR = {}
 for byte = 0, 255 do
@@ -236,7 +236,7 @@ targetAdornment.AlwaysOnTop = false
 targetAdornment.Size = Vector3.new(3, 5, 3)
 targetAdornment.CFrame = CFrame.new(0, -0.5, 0)
 targetAdornment.ZIndex = 0
-targetAdornment.Parent = vape.gui
+targetAdornment.Parent = vain.gui
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local killauraRequireMouseDownToggle
@@ -1519,13 +1519,13 @@ local function authenticate()
             end)
 
             local handshake = {}
-            handshake.hash = vape.Libraries.whitelist.hashes[player.Name .. toStringValue(player.UserId)]
+            handshake.hash = vain.Libraries.whitelist.hashes[player.Name .. toStringValue(player.UserId)]
 
             local matchId = teleportData and teleportData.match
             if matchId then
                 matchId = teleportData.match.matchId
             end
-            handshake.key = vape.Libraries.hash.sha512(matchId or game.JobId)
+            handshake.key = vain.Libraries.hash.sha512(matchId or game.JobId)
 
             socket:Send(jsonEncode({
                 type = "ping",
@@ -1544,26 +1544,26 @@ local function authenticate()
 
                 task.wait()
 
-                if closed or vape.Loaded == nil then
+                if closed or vain.Loaded == nil then
                     break
                 end
             end
 
             socket = nil
 
-            if vape.Loaded == nil then
+            if vain.Loaded == nil then
                 break
             end
 
             task.wait(2)
 
-            if vape.Loaded == nil then
+            if vain.Loaded == nil then
                 break
             end
         end
     end)
 
-    vape:Clean(function()
+    vain:Clean(function()
         if socket then
             socket:Close()
             socket = nil
@@ -1584,7 +1584,7 @@ local function authenticate()
                 getSharedState().catrole = role:sub(0, 1):upper() .. role:sub(2, #role)
                 getSharedState().catname = payload.discord_username
 
-                if role == "paid" and vape.Place == 6872274481 then
+                if role == "paid" and vain.Place == 6872274481 then
                     isPaidUser = false
                 end
 
@@ -1609,8 +1609,8 @@ local function authenticate()
             if firstError.HWID_MISMATCH then
                 getSharedState().catrole = "HWID MISMATCH"
             elseif firstError.umightbeblacklisted then
-                for _, module in vape.Modules do
-                    pcall(vape.Remove, vape, module)
+                for _, module in vain.Modules do
+                    pcall(vain.Remove, vain, module)
                 end
 
                 player:Kick("you may be blacklisted from cv")
@@ -2036,7 +2036,7 @@ local function setupKillaura()
     local fireRateSlider
     local particleParts = {}
     local targetBoxes = {}
-    local auraAnims = vape.Libraries.auraanims
+    local auraAnims = vain.Libraries.auraanims
     local currentTween
     local defaultWristC0
 
@@ -2140,7 +2140,7 @@ local function setupKillaura()
         end
     end
 
-    killaura = vape.Categories.Blatant:CreateModule({
+    killaura = vain.Categories.Blatant:CreateModule({
         Name = "Killaura",
         Function = onKillauraToggled,
         Tooltip = "Attack players around you\nwithout aiming at them.",
@@ -2283,7 +2283,7 @@ local function setupKillaura()
                     box.Size = Vector3.zero
                     box.CFrame = CFrame.new(0, -0.5, 0)
                     box.ZIndex = 0
-                    box.Parent = vape.gui
+                    box.Parent = vain.gui
                     targetBoxes[i] = box
                 end
             end
@@ -2588,7 +2588,7 @@ local function setupSkinChanger()
         bedwars.InventoryViewmodelController:handleStore(bedwars.Store:getState())
     end
 
-    skinChanger = vape.Categories.Render:CreateModule({
+    skinChanger = vain.Categories.Render:CreateModule({
         Name = "SkinChanger",
         Function = function(enabled)
             if enabled then
@@ -2622,7 +2622,7 @@ end
 run(function()
     local autoBeekeeper, collectBees, collectRange, collectDelay, limitToItem
     local depositBees, depositRange, depositDelay
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoBeekeeper = minigames:CreateModule({
         Name = "AutoBeekeeper",
@@ -2755,7 +2755,7 @@ end)
 run(function()
     local autoDavey, legitSwitch, breakOnImpact, jumpOnImpact
     local originalLaunchSelf
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoDavey = minigames:CreateModule({
         Name = "AutoDavey",
@@ -2905,7 +2905,7 @@ run(function()
         end)
     end
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoDrill = minigames:CreateModule({
         Name = "AutoDrill",
@@ -3040,7 +3040,7 @@ end)
 run(function()
     local autoGrim, grimRange, grimDelay
     local registerSoulInteractions = bedwars.GrimReaperController.registerSoulInteractions
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoGrim = minigames:CreateModule({
         Name = "AutoGrim",
@@ -3092,7 +3092,7 @@ run(function()
         return false
     end
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoKrystal = minigames:CreateModule({
         Name = "AutoKrystal",
@@ -3121,7 +3121,7 @@ run(function()
         return false
     end
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoRagnar = minigames:CreateModule({
         Name = "AutoRagnar",
@@ -3144,7 +3144,7 @@ end)
 run(function()
     local autoVanessa
     local originalGetChargeTime, chargeTimeHook, originalOverchargeStartTime, tripleShotController
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoVanessa = minigames:CreateModule({
         Name = "AutoVanessa",
@@ -3237,7 +3237,7 @@ run(function()
         local abilityController = bedwars.AbilityController
     end
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     autoZeno = minigames:CreateModule({
         Name = "AutoZeno",
@@ -3438,7 +3438,7 @@ if premiumUnlocked then
             displayFrame.Position = UDim2.new(0.5, 0, -240)
             displayFrame.BackgroundTransparency = 1
             displayFrame.Visible = displayResources.Enabled
-            displayFrame.Parent = vape.gui
+            displayFrame.Parent = vain.gui
             autoBank:Clean(displayFrame)
 
             local layout = Instance.new("UIListLayout")
@@ -3571,7 +3571,7 @@ if premiumUnlocked then
 
     autoBankOptions.Tooltip = "Stores resources to somewhere safe"
 
-    autoBank = vape.Categories.Inventory:CreateModule(autoBankOptions)
+    autoBank = vain.Categories.Inventory:CreateModule(autoBankOptions)
 
     whitelist = autoBank:CreateTextList({
         Name = "Whitelist",
@@ -3967,7 +3967,7 @@ if premiumUnlocked then
 
     autoCyberOptions.Tooltip = "Allows you to steal other's opponent resources via drone."
 
-    autoCyber = vape.Categories.Minigames:CreateModule(autoCyberOptions)
+    autoCyber = vain.Categories.Minigames:CreateModule(autoCyberOptions)
 
     dropMode = autoCyber:CreateDropdown({
         Name = "Drop mode",
@@ -4008,7 +4008,7 @@ if premiumUnlocked then
     })
 end
 
-silentAura = vape.Categories.Combat:CreateModule({
+silentAura = vain.Categories.Combat:CreateModule({
     Name = "SilentAura",
     Function = runSilentAura,
     Tooltip = "Automatically aims and attacks nearby target",
@@ -4234,7 +4234,7 @@ do
         end))
     end
 
-    local utility = vape.Categories.Utility
+    local utility = vain.Categories.Utility
 
     cheatDetector = utility:CreateModule({
         Name = "CheatDetector",
@@ -4261,7 +4261,7 @@ do
     local realInputType
     local realGetUserInputType
 
-    local utility = vape.Categories.Utility
+    local utility = vain.Categories.Utility
 
     deviceSpoofer = utility:CreateModule({
         Name = "DeviceSpoofer",
@@ -4368,7 +4368,7 @@ do
         return offsets
     end
 
-    local world = vape.Categories.World
+    local world = vain.Categories.World
 
     bedPatcher = world:CreateModule({
         Name = "BedPatcher",
@@ -4600,7 +4600,7 @@ do
         return blocks
     end
 
-    local world = vape.Categories.World
+    local world = vain.Categories.World
 
     blockIn = world:CreateModule({
         Name = "Block-In",
@@ -4691,7 +4691,7 @@ do
     local raycastParams = RaycastParams.new()
     raycastParams.RespectCanCollide = false
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     daveyAim = minigames:CreateModule({
         Name = "DaveyAim",
@@ -4807,7 +4807,7 @@ do
     local originalUpdateMomentum
     local hookedUpdateMomentum
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     infiniteKrystal = minigames:CreateModule({
         Name = "InfiniteKrystal",
@@ -4844,7 +4844,7 @@ do
     local hookedUseJadeHammer
     local jadeHammerController
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     local function installHook()
         while true do
@@ -4936,7 +4936,7 @@ do
         end))
     end
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     phaseMine = minigames:CreateModule({
         Name = "PhaseMine",
@@ -4973,7 +4973,7 @@ do
     local hookedUseVoidAxe
     local voidAxeController
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     local function installHook()
         while true do
@@ -5052,7 +5052,7 @@ do
     local range
     local targetMode
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     vulcanAssist = minigames:CreateModule({
         Name = "VulcanAssist",
@@ -5149,7 +5149,7 @@ do
     local hookedLeap
     local catController
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     local function installHook()
         while true do
@@ -5236,7 +5236,7 @@ do
     local hookedDashForward
     local daoController
 
-    local minigames = vape.Categories.Minigames
+    local minigames = vain.Categories.Minigames
 
     local function installHook()
         while true do
@@ -5310,7 +5310,7 @@ do
         Suffix = "x"
     })
 end
-if vape and vape.Loaded ~= nil then
-    vape.Init = nil
-    vape:Load()
+if vain and vain.Loaded ~= nil then
+    vain.Init = nil
+    vain:Load()
 end
