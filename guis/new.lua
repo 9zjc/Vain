@@ -1,4 +1,4 @@
-local vape = {
+local vain = {
 	ActiveBinds = {},
 	Categories = {},
 	GUIColor = {
@@ -37,7 +37,7 @@ local httpService = cloneref(game:GetService('HttpService'))
 local fontsize = Instance.new('GetTextBoundsParams')
 fontsize.Width = math.huge
 local notifications
-local getvapeasset
+local getvainasset
 local components
 local clickgui
 local scaledgui
@@ -76,7 +76,7 @@ do
 		return Color3.fromHSV(h, s, math.clamp(select(3, uipallet.Main:ToHSV()) > 0.5 and v - num or v + num, 0, 1))
 	end
 
-	function vape:Color(h)
+	function vain:Color(h)
 		local s = 0.74 + (0.26 * math.min(h / 0.045, 1))
 
 		if h > 0.577 then
@@ -94,7 +94,7 @@ do
 		return h, s, 1
 	end
 
-	function vape:TextColor(h, s, v)
+	function vain:TextColor(h, s, v)
 		if v >= 0.7 and (s < 0.6 or h > 0.04 and h < 0.56) then
 			return Color3.new(0.19, 0.19, 0.19)
 		end
@@ -114,7 +114,7 @@ local function getfontbounds(text, size, font)
 end
 
 do
-	local vapeAssets = {
+	local vainAssets = {
 		['vain/assets/new/add.png'] = 'rbxassetid://121642387707174',
 		['vain/assets/new/aim.png'] = 'rbxassetid://122207028123421',
 		['vain/assets/new/allowedicon.png'] = 'rbxassetid://112336790299036',
@@ -171,16 +171,16 @@ do
 		['vain/assets/new/theme.png'] = 'rbxassetid://111525258317113',
 		['vain/assets/new/utility.png'] = 'rbxassetid://108303206513893',
 		['vain/assets/new/vape.png'] = 'rbxassetid://92153855792786',
-		['vain/assets/new/vapelogo.png'] = 'rbxassetid://126205920310261',
-		['vain/assets/new/vapelogomini.png'] = 'rbxassetid://109041903452149',
+		['vain/assets/new/vainlogo.png'] = 'rbxassetid://126205920310261',
+		['vain/assets/new/vainlogomini.png'] = 'rbxassetid://109041903452149',
 		['vain/assets/new/v4.png'] = 'rbxassetid://102549752760489',
 		['vain/assets/new/v4mini.png'] = 'rbxassetid://115213099001611',
 		['vain/assets/new/world.png'] = 'rbxassetid://118917453153459'
 	}
 
 	local function createDownloader(text)
-		if vape.Loaded ~= true then
-			local downloader = vape.Downloader
+		if vain.Loaded ~= true then
+			local downloader = vain.Downloader
 			if not downloader then
 				downloader = Instance.new('TextLabel')
 				downloader.BackgroundTransparency = 1
@@ -189,8 +189,8 @@ do
 				downloader.TextColor3 = Color3.new(1, 1, 1)
 				downloader.TextSize = 20
 				downloader.TextStrokeTransparency = 0
-				downloader.Parent = vape.gui
-				vape.Downloader = downloader
+				downloader.Parent = vain.gui
+				vain.Downloader = downloader
 			end
 
 			downloader.Text = 'Downloading '..text
@@ -210,7 +210,7 @@ do
 			end
 
 			if path:find('.lua') then
-				data = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..data
+				data = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vain updates.\n'..data
 			end
 
 			writefile(path, data)
@@ -219,10 +219,10 @@ do
 		return (callback or readfile)(path)
 	end
 
-	getvapeasset = not inputService.TouchEnabled and getcustomasset and function(path)
+	getvainasset = not inputService.TouchEnabled and getcustomasset and function(path)
 		return downloadFile(path, getcustomasset)
 	end or function(path)
-		return vapeAssets[path] or ''
+		return vainAssets[path] or ''
 	end
 end
 
@@ -290,10 +290,10 @@ do
 	fontsize.Font = uipallet.Font
 end
 
-vape.Libraries = {
+vain.Libraries = {
 	color = color,
 	getfontbounds = getfontbounds,
-	getvapeasset = getvapeasset,
+	getvainasset = getvainasset,
 	tween = tween,
 	uipallet = uipallet,
 }
@@ -306,7 +306,7 @@ local function addBlur(parent, notif, old)
 		blur.Size = UDim2.new(1, 89, 1, 52)
 		blur.Position = UDim2.fromOffset(-48, -31)
 		blur.BackgroundTransparency = 1
-		blur.Image = getvapeasset('vain/assets/new/'..(notif and 'blurnoti' or 'blur')..'.png')
+		blur.Image = getvainasset('vain/assets/new/'..(notif and 'blurnoti' or 'blur')..'.png')
 		blur.ScaleType = Enum.ScaleType.Slice
 		blur.SliceCenter = Rect.new(52, 31, 261, 502)
 		blur.Parent = parent
@@ -333,7 +333,7 @@ local function addCloseButton(parent, mini, offset)
 	close.AutoButtonColor = false
 	close.BackgroundColor3 = Color3.new(1, 1, 1)
 	close.BackgroundTransparency = 1
-	close.Image = getvapeasset('vain/assets/new/'..(mini and 'closemini' or 'close')..'.png')
+	close.Image = getvainasset('vain/assets/new/'..(mini and 'closemini' or 'close')..'.png')
 	close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 	close.ImageTransparency = 0.5
 	close.Name = 'Close'
@@ -459,7 +459,7 @@ local function addTooltip(gui, text, customText, visCheck)
 		tooltipMoved(x, y)
 
 		if customText then
-			vape.CurrentTooltip = callback
+			vain.CurrentTooltip = callback
 			callback()
 		end
 	end)
@@ -470,7 +470,7 @@ local function addTooltip(gui, text, customText, visCheck)
 		end
 
 		tooltip.Visible = false
-		vape.CurrentTooltip = nil
+		vain.CurrentTooltip = nil
 	end)
 end
 
@@ -550,22 +550,22 @@ local function removeTags(text)
 	return text:gsub('<[^<>]->', '')
 end
 
-function vape:BlurCheck()
+function vain:BlurCheck()
 	if self.ThreadFix then
 		setthreadidentity(8)
 		runService:SetRobloxGuiFocused((clickgui.Visible or guiService:GetErrorType() ~= Enum.ConnectionError.OK) and self.Blur.Enabled)
 	end
 end
 
-function vape:CreateCategory(props)
+function vain:CreateCategory(props)
 	return components.Category(props)
 end
 
-function vape:CreateCategoryList(props)
+function vain:CreateCategoryList(props)
 	return components.CategoryList(props)
 end
 
-function vape:CreateNotification(title, text, duration, type)
+function vain:CreateNotification(title, text, duration, type)
 	if not self.Notifications.Enabled then
 		return
 	end
@@ -579,7 +579,7 @@ function vape:CreateNotification(title, text, duration, type)
 		local notification = Instance.new('ImageLabel')
 		notification.BackgroundTransparency = 1
 		notification.Position = UDim2.new(1, 0, 1, -(29 + (78 * index)))
-		notification.Image = getvapeasset('vain/assets/new/notification.png')
+		notification.Image = getvainasset('vain/assets/new/notification.png')
 		notification.ScaleType = Enum.ScaleType.Slice
 		notification.SliceCenter = Rect.new(7, 7, 9, 9)
 		notification.ZIndex = 5
@@ -587,7 +587,7 @@ function vape:CreateNotification(title, text, duration, type)
 		addBlur(notification, true, true)
 		local iconshadow = Instance.new('ImageLabel')
 		iconshadow.BackgroundTransparency = 1
-		iconshadow.Image = getvapeasset('vain/assets/new/noti_'..(type or 'info')..'.png')
+		iconshadow.Image = getvainasset('vain/assets/new/noti_'..(type or 'info')..'.png')
 		iconshadow.ImageColor3 = Color3.new()
 		iconshadow.ImageTransparency = 0.5
 		iconshadow.Position = UDim2.fromOffset(-5, -8)
@@ -663,11 +663,11 @@ function vape:CreateNotification(title, text, duration, type)
 	end)
 end
 
-function vape:CreateOverlay(props)
+function vain:CreateOverlay(props)
 	return components.Overlay(props)
 end
 
-function vape:Load(skipgui, profile)
+function vain:Load(skipgui, profile)
 	local guiData = {Categories = {}}
 	local oldProfile = self.Profile
 	local canSave = true
@@ -768,7 +768,7 @@ function vape:Load(skipgui, profile)
 		button.Parent = gui
 		local image = Instance.new('ImageLabel')
 		image.BackgroundTransparency = 1
-		image.Image = getvapeasset('vain/assets/new/vape.png')
+		image.Image = getvainasset('vain/assets/new/vape.png')
 		image.Position = UDim2.fromOffset(6, 6)
 		image.Size = UDim2.fromOffset(20, 20)
 		image.Parent = button
@@ -782,7 +782,7 @@ function vape:Load(skipgui, profile)
 	return toggleData
 end
 
-function vape:LoadOptions(obj, data)
+function vain:LoadOptions(obj, data)
 	for name, componentData in data do
 		local component = obj.Options[name]
 
@@ -792,26 +792,26 @@ function vape:LoadOptions(obj, data)
 	end
 end
 
-function vape:LoadGUI()
-	addMaid(vape)
+function vain:LoadGUI()
+	addMaid(vain)
 	gui = Instance.new('ScreenGui')
 	gui.Name = randomString()
 	gui.DisplayOrder = 9999999
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 	gui.IgnoreGuiInset = true
 	
-	if vape.ThreadFix then
+	if vain.ThreadFix then
 		local holder = Instance.new('Folder')
 		holder.Parent = cloneref(game:GetService('CoreGui'))
 		gui.OnTopOfCoreBlur = true
 		gui.Parent = (gethui and gethui()) or cloneref(game:GetService('CoreGui'))
-		vape.holder = holder
+		vain.holder = holder
 	else
 		gui.Parent = cloneref(game:GetService('Players')).LocalPlayer.PlayerGui
 		gui.ResetOnSpawn = false
-		vape.holder = gui
+		vain.holder = gui
 	end
-	vape.gui = gui
+	vain.gui = gui
 	
 	scaledgui = Instance.new('Frame')
 	scaledgui.BackgroundTransparency = 1
@@ -867,37 +867,37 @@ function vape:LoadGUI()
 	scaledgui.Size = UDim2.fromScale(1 / scale.Scale, 1 / scale.Scale)
 	components.GUI({})
 	
-	vape:CreateCategory({
+	vain:CreateCategory({
 		Name = 'Combat',
-		Icon = getvapeasset('vain/assets/new/combat.png'),
+		Icon = getvainasset('vain/assets/new/combat.png'),
 		Size = UDim2.fromOffset(13, 14)
 	})
-	vape:CreateCategory({
+	vain:CreateCategory({
 		Name = 'Blatant',
-		Icon = getvapeasset('vain/assets/new/blatant.png'),
+		Icon = getvainasset('vain/assets/new/blatant.png'),
 		Size = UDim2.fromOffset(14, 14)
 	})
-	vape:CreateCategory({
+	vain:CreateCategory({
 		Name = 'Render',
-		Icon = getvapeasset('vain/assets/new/render.png'),
+		Icon = getvainasset('vain/assets/new/render.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
-	vape:CreateCategory({
+	vain:CreateCategory({
 		Name = 'Utility',
-		Icon = getvapeasset('vain/assets/new/utility.png'),
+		Icon = getvainasset('vain/assets/new/utility.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
-	vape:CreateCategory({
+	vain:CreateCategory({
 		Name = 'World',
-		Icon = getvapeasset('vain/assets/new/world.png'),
+		Icon = getvainasset('vain/assets/new/world.png'),
 		Size = UDim2.fromOffset(14, 14)
 	})
-	vape:CreateCategory({
+	vain:CreateCategory({
 		Name = 'Inventory',
-		Icon = getvapeasset('vain/assets/new/inventory.png'),
+		Icon = getvainasset('vain/assets/new/inventory.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
-	vape.Categories.Main:CreateDivider({
+	vain.Categories.Main:CreateDivider({
 		Text = 'misc'
 	})
 	
@@ -912,9 +912,9 @@ function vape:LoadGUI()
 			Value = 1
 		}
 	
-		friends = vape:CreateCategoryList({
+		friends = vain:CreateCategoryList({
 			Name = 'Friends',
-			Icon = getvapeasset('vain/assets/new/friends.png'),
+			Icon = getvainasset('vain/assets/new/friends.png'),
 			Size = UDim2.fromOffset(17, 16),
 			Placeholder = 'Roblox username',
 			Color = Color3.fromRGB(5, 134, 105),
@@ -958,16 +958,16 @@ function vape:LoadGUI()
 				friends.ColorUpdate:Fire(friendscolor.Hue, friendscolor.Sat, friendscolor.Value)
 			end
 		})
-		vape:Clean(friends.Update)
-		vape:Clean(friends.ColorUpdate)
+		vain:Clean(friends.Update)
+		vain:Clean(friends.ColorUpdate)
 	end
 	
 	--[[
 		Profiles
 	]]
-	vape:CreateCategoryList({
+	vain:CreateCategoryList({
 		Name = 'Profiles',
-		Icon = getvapeasset('vain/assets/new/profiles.png'),
+		Icon = getvainasset('vain/assets/new/profiles.png'),
 		Size = UDim2.fromOffset(17, 10),
 		Position = UDim2.fromOffset(12, 16),
 		Placeholder = 'Type name',
@@ -978,9 +978,9 @@ function vape:LoadGUI()
 		Targets
 	]]
 	local targets
-	targets = vape:CreateCategoryList({
+	targets = vain:CreateCategoryList({
 		Name = 'Targets',
-		Icon = getvapeasset('vain/assets/new/friends.png'),
+		Icon = getvainasset('vain/assets/new/friends.png'),
 		Size = UDim2.fromOffset(17, 16),
 		Placeholder = 'Roblox username',
 		Function = function()
@@ -988,19 +988,19 @@ function vape:LoadGUI()
 		end
 	})
 	targets.Update = Instance.new('BindableEvent')
-	vape:Clean(targets.Update)
+	vain:Clean(targets.Update)
 	
 	components.LegitWindow()
-	vape.SearchBar = components.SearchBar()
-	vape.Categories.Main:CreateOverlayBar()
+	vain.SearchBar = components.SearchBar()
+	vain.Categories.Main:CreateOverlayBar()
 	
 	--[[
 		General Settings
 	]]
 	
-	local general = vape.Categories.Main.Settings:CreateSettingsPane({Name = 'General'})
+	local general = vain.Categories.Main.Settings:CreateSettingsPane({Name = 'General'})
 	local settingConnections = {}
-	vape.MultiKeybind = general:CreateToggle({
+	vain.MultiKeybind = general:CreateToggle({
 		Name = 'Enable Multi-Keybinding',
 		Tooltip = 'Allows multiple keys to be bound to a module (eg. G + H)'
 	})
@@ -1008,7 +1008,7 @@ function vape:LoadGUI()
 		Name = 'Allow setting keybinds',
 		Function = function(callback)
 			if callback then
-				for _, container in {vape.Modules, vape.Legit.Modules} do
+				for _, container in {vain.Modules, vain.Legit.Modules} do
 					for _, module in container do
 						for _, component in module.Options do
 							if component.Type == 'Toggle' then
@@ -1020,15 +1020,15 @@ function vape:LoadGUI()
 								table.insert(settingConnections, bind.Triggered:Connect(function(isDown)
 									if bind.Hold then
 										if component.Enabled ~= isDown then
-											if vape.SettingToggleNotifications.Enabled then
-												vape:CreateNotification(module.Name, component.Name..' '..(not component.Enabled and "<font color='#00AA00'>ON</font>" or "<font color='#FF5A5A'>OFF</font>"), 1.5)
+											if vain.SettingToggleNotifications.Enabled then
+												vain:CreateNotification(module.Name, component.Name..' '..(not component.Enabled and "<font color='#00AA00'>ON</font>" or "<font color='#FF5A5A'>OFF</font>"), 1.5)
 											end
 	
 											component:Toggle()
 										end
 									else
-										if vape.SettingToggleNotifications.Enabled then
-											vape:CreateNotification(module.Name, component.Name..' '..(not component.Enabled and "<font color='#00AA00'>ON</font>" or "<font color='#FF5A5A'>OFF</font>"), 1.5)
+										if vain.SettingToggleNotifications.Enabled then
+											vain:CreateNotification(module.Name, component.Name..' '..(not component.Enabled and "<font color='#00AA00'>ON</font>" or "<font color='#FF5A5A'>OFF</font>"), 1.5)
 										end
 	
 										component:Toggle()
@@ -1047,7 +1047,7 @@ function vape:LoadGUI()
 					end
 				end
 			else
-				for _, container in {vape.Modules, vape.Legit.Modules} do
+				for _, container in {vain.Modules, vain.Legit.Modules} do
 					for _, module in container do
 						for _, component in module.Options do
 							if component.Bind then
@@ -1069,13 +1069,13 @@ function vape:LoadGUI()
 	general:CreateButton({
 		Name = 'Reset current profile',
 		Function = function()
-		vape.Save = function() end
-			if isfile('vain/profiles/'..vape.Profile..vape.Place..'.txt') and delfile then
-				delfile('vain/profiles/'..vape.Profile..vape.Place..'.txt')
+		vain.Save = function() end
+			if isfile('vain/profiles/'..vain.Profile..vain.Place..'.txt') and delfile then
+				delfile('vain/profiles/'..vain.Profile..vain.Place..'.txt')
 			end
 	
-			shared.vapereload = true
-			if shared.VapeDeveloper then
+			shared.vainreload = true
+			if shared.VainDeveloper then
 				loadstring(readfile('vain/loader.lua'), 'loader')()
 			else
 				loadstring(game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/loader.lua', true))()
@@ -1087,7 +1087,7 @@ function vape:LoadGUI()
 	general:CreateButton({
 		Name = 'Self destruct',
 		Function = function()
-			vape:Uninject()
+			vain:Uninject()
 		end,
 		Tooltip = 'Removes Vain from the current game'
 	})
@@ -1095,8 +1095,8 @@ function vape:LoadGUI()
 	general:CreateButton({
 		Name = 'Reinject',
 		Function = function()
-			shared.vapereload = true
-			if shared.VapeDeveloper then
+			shared.vainreload = true
+			if shared.VainDeveloper then
 				loadstring(readfile('vain/loader.lua'), 'loader')()
 			else
 				loadstring(game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/loader.lua', true))()
@@ -1109,14 +1109,14 @@ function vape:LoadGUI()
 		Module Settings
 	]]
 	
-	local modules = vape.Categories.Main.Settings:CreateSettingsPane({Name = 'Modules'})
+	local modules = vain.Categories.Main.Settings:CreateSettingsPane({Name = 'Modules'})
 	modules:CreateToggle({
 		Name = 'Teams by server',
 		Tooltip = 'Ignore players on your team designated by the server',
 		Default = true,
 		Function = function()
-			if vape.Libraries.entity and vape.Libraries.entity.Running then
-				vape.Libraries.entity.refresh()
+			if vain.Libraries.entity and vain.Libraries.entity.Running then
+				vain.Libraries.entity.refresh()
 			end
 		end
 	})
@@ -1126,8 +1126,8 @@ function vape:LoadGUI()
 		Tooltip = 'Uses the TeamColor property on players for render modules',
 		Default = true,
 		Function = function()
-			if vape.Libraries.entity and vape.Libraries.entity.Running then
-				vape.Libraries.entity.refresh()
+			if vain.Libraries.entity and vain.Libraries.entity.Running then
+				vain.Libraries.entity.refresh()
 			end
 		end
 	})
@@ -1136,11 +1136,11 @@ function vape:LoadGUI()
 		GUI Settings
 	]]
 	
-	local guipane = vape.Categories.Main.Settings:CreateSettingsPane({Name = 'GUI'})
-	vape.Blur = guipane:CreateToggle({
+	local guipane = vain.Categories.Main.Settings:CreateSettingsPane({Name = 'GUI'})
+	vain.Blur = guipane:CreateToggle({
 		Name = 'Blur background',
 		Function = function()
-			vape:BlurCheck()
+			vain:BlurCheck()
 		end,
 		Default = true,
 		Tooltip = 'Blur the background of the GUI'
@@ -1175,7 +1175,7 @@ function vape:LoadGUI()
 	})
 	
 	local ScaleSlider = {Object = {}, Value = 1}
-	vape.Scale = guipane:CreateToggle({
+	vain.Scale = guipane:CreateToggle({
 		Name = 'Auto rescale',
 		Default = true,
 		Function = function(callback)
@@ -1195,7 +1195,7 @@ function vape:LoadGUI()
 		Max = 2,
 		Decimal = 10,
 		Function = function(val, final)
-			if final and not vape.Scale.Enabled then
+			if final and not vain.Scale.Enabled then
 				scale.Scale = val
 			end
 		end,
@@ -1204,7 +1204,7 @@ function vape:LoadGUI()
 		Visible = false
 	})
 	
-	vape.RainbowSpeed = guipane:CreateSlider({
+	vain.RainbowSpeed = guipane:CreateSlider({
 		Name = 'Rainbow speed',
 		Min = 0.1,
 		Max = 10,
@@ -1213,7 +1213,7 @@ function vape:LoadGUI()
 		Tooltip = 'Adjusts the speed of rainbow values'
 	})
 	
-	vape.RainbowUpdateSpeed = guipane:CreateSlider({
+	vain.RainbowUpdateSpeed = guipane:CreateSlider({
 		Name = 'Rainbow update rate',
 		Min = 1,
 		Max = 144,
@@ -1228,8 +1228,8 @@ function vape:LoadGUI()
 		Function = function(val, mouse)
 			if mouse then
 				writefile('vain/profiles/gui.txt', val)
-				shared.vapereload = true
-				if shared.VapeDeveloper then
+				shared.vainreload = true
+				if shared.VainDeveloper then
 					loadstring(readfile('vain/loader.lua'), 'loader')()
 				else
 					loadstring(game:HttpGet('https://raw.githubusercontent.com/9zjc/Vain/'..readfile('vain/profiles/commit.txt')..'/loader.lua', true))()
@@ -1244,12 +1244,12 @@ function vape:LoadGUI()
 		List = {'Floating', 'None'},
 		Default = 'Floating',
 		Function = function(value)
-			vape.SearchBar.Object.Visible = value == 'Floating'
+			vain.SearchBar.Object.Visible = value == 'Floating'
 		end,
 		Tooltip = 'Switch between search bar styles'
 	})
 	
-	vape.RainbowMode = guipane:CreateDropdown({
+	vain.RainbowMode = guipane:CreateDropdown({
 		Name = 'Rainbow Mode',
 		List = {'Normal', 'Gradient', 'Retro'},
 		Tooltip = 'Normal - Smooth color fade\nGradient - Gradient color fade\nRetro - Static color'
@@ -1258,7 +1258,7 @@ function vape:LoadGUI()
 	guipane:CreateButton({
 		Name = 'Reset GUI positions',
 		Function = function()
-			for _, category in vape.Categories do
+			for _, category in vain.Categories do
 				category.Object.Position = UDim2.fromOffset(6, 42)
 			end
 		end,
@@ -1281,7 +1281,7 @@ function vape:LoadGUI()
 			}
 	
 			local categories = {}
-			for _, category in vape.Categories do
+			for _, category in vain.Categories do
 				if category.Type ~= 'Overlay' then
 					table.insert(categories, category)
 				end
@@ -1306,43 +1306,43 @@ function vape:LoadGUI()
 		Notification Settings
 	]]
 	
-	local notifpane = vape.Categories.Main.Settings:CreateSettingsPane({Name = 'Notifications'})
-	vape.Notifications = notifpane:CreateToggle({
+	local notifpane = vain.Categories.Main.Settings:CreateSettingsPane({Name = 'Notifications'})
+	vain.Notifications = notifpane:CreateToggle({
 		Name = 'Notifications',
 		Function = function(enabled)
-			if vape.ToggleNotifications.Object then
-				vape.ToggleNotifications.Object.Visible = enabled
+			if vain.ToggleNotifications.Object then
+				vain.ToggleNotifications.Object.Visible = enabled
 			end
 	
-			if vape.SettingToggleNotifications.Object then
-				vape.SettingToggleNotifications.Object.Visible = enabled
+			if vain.SettingToggleNotifications.Object then
+				vain.SettingToggleNotifications.Object.Visible = enabled
 			end
 		end,
 		Tooltip = 'Shows notifications',
 		Default = true
 	})
 	
-	vape.ToggleNotifications = notifpane:CreateToggle({
+	vain.ToggleNotifications = notifpane:CreateToggle({
 		Name = 'Toggle alert',
 		Tooltip = 'Notifies you if a module is enabled/disabled.',
 		Default = true,
 		Darker = true
 	})
-	vape.SettingToggleNotifications = notifpane:CreateToggle({
+	vain.SettingToggleNotifications = notifpane:CreateToggle({
 		Name = 'Setting toggle alert',
 		Tooltip = 'Notifies you when a bound setting is toggled.',
 		Default = true,
 		Darker = true
 	})
 	
-	vape.GUIColor = vape.Categories.Main.Settings:CreateGUISlider({
+	vain.GUIColor = vain.Categories.Main.Settings:CreateGUISlider({
 		Name = 'GUI Theme',
 		Function = function(h, s, v)
-			vape:UpdateGUI()
+			vain:UpdateGUI()
 		end
 	})
 	
-	vape.GUIBind = vape.Categories.Main.Settings:CreateBind({
+	vain.GUIBind = vain.Categories.Main.Settings:CreateBind({
 		Name = 'Rebind GUI',
 		Default = {'RightShift'},
 		NoRemove = true,
@@ -1385,27 +1385,27 @@ function vape:LoadGUI()
 			end
 		end
 		
-		TextGUI = vape:CreateOverlay({
+		TextGUI = vain:CreateOverlay({
 			Name = 'Text GUI',
-			Icon = getvapeasset('vain/assets/new/textgui.png'),
+			Icon = getvainasset('vain/assets/new/textgui.png'),
 			Size = UDim2.fromOffset(16, 12),
 			Position = UDim2.fromOffset(12, 14),
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		Sort = TextGUI:CreateDropdown({
 			Name = 'Sort',
 			List = {'Alphabetical', 'Length'},
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		FontOption = TextGUI:CreateFont({
 			Name = 'Font',
 			Default = 'Arial',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		ColorMode = TextGUI:CreateDropdown({
@@ -1413,13 +1413,13 @@ function vape:LoadGUI()
 			List = {'Match GUI color', 'Custom color'},
 			Function = function(value)
 				ColorSlider.Object.Visible = value == 'Custom color'
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		ColorSlider = TextGUI:CreateColorSlider({
 			Name = 'Text GUI color',
 			Function = function()
-				vape:UpdateGUI()
+				vain:UpdateGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1432,14 +1432,14 @@ function vape:LoadGUI()
 			Default = 1,
 			Function = function(val)
 				Scale.Scale = val
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		Shadow = TextGUI:CreateToggle({
 			Name = 'Shadow',
 			Tooltip = 'Renders shadowed text.',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		Gradient = TextGUI:CreateToggle({
@@ -1447,13 +1447,13 @@ function vape:LoadGUI()
 			Tooltip = 'Renders a gradient',
 			Function = function(callback)
 				GradientV4.Object.Visible = callback
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		GradientV4 = TextGUI:CreateToggle({
 			Name = 'Vain Gradient',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1462,14 +1462,14 @@ function vape:LoadGUI()
 			Name = 'Animations',
 			Tooltip = 'Use animations on text gui',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		Watermark = TextGUI:CreateToggle({
 			Name = 'Watermark',
 			Tooltip = 'Renders a Vain watermark',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		Background = TextGUI:CreateToggle({
@@ -1477,7 +1477,7 @@ function vape:LoadGUI()
 			Function = function(callback)
 				BackgroundTransparency.Object.Visible = callback
 				BackgroundTint.Object.Visible = callback
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		BackgroundTransparency = TextGUI:CreateSlider({
@@ -1487,7 +1487,7 @@ function vape:LoadGUI()
 			Default = 0.5,
 			Decimal = 10,
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1495,7 +1495,7 @@ function vape:LoadGUI()
 		BackgroundTint = TextGUI:CreateToggle({
 			Name = 'Tint',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1505,7 +1505,7 @@ function vape:LoadGUI()
 			Tooltip = 'Allows you to blacklist certain modules from being shown.',
 			Function = function(enabled)
 				HideModulesList.Object.Visible = enabled
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		HideModulesList = TextGUI:CreateTextList({
@@ -1513,7 +1513,7 @@ function vape:LoadGUI()
 			Tooltip = 'Name of module to hide.',
 			Color = Color3.fromRGB(250, 50, 56),
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end,
 			Visible = false,
 			Darker = true
@@ -1521,7 +1521,7 @@ function vape:LoadGUI()
 		HideRender = TextGUI:CreateToggle({
 			Name = 'Hide render',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		CustomText = TextGUI:CreateToggle({
@@ -1531,13 +1531,13 @@ function vape:LoadGUI()
 				CustomTextFont.Object.Visible = enabled
 				CustomTextColor.Object.Visible = enabled
 				CustomTextColorSlider.Object.Visible = CustomTextColor.Enabled and enabled
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		})
 		CustomTextBox = TextGUI:CreateTextBox({
 			Name = 'Custom text',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1546,7 +1546,7 @@ function vape:LoadGUI()
 			Name = 'Custom Font',
 			Default = 'Arial',
 			Function = function()
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1555,7 +1555,7 @@ function vape:LoadGUI()
 			Name = 'Set custom text color',
 			Function = function(enabled)
 				CustomTextColorSlider.Object.Visible = enabled
-				vape:UpdateGUI()
+				vain:UpdateGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1563,7 +1563,7 @@ function vape:LoadGUI()
 		CustomTextColorSlider = TextGUI:CreateColorSlider({
 			Name = 'Color of custom text',
 			Function = function(afterload)
-				vape:UpdateGUI()
+				vain:UpdateGUI()
 			end,
 			Darker = true,
 			Visible = false
@@ -1580,7 +1580,7 @@ function vape:LoadGUI()
 		Logo.BackgroundColor3 = Color3.new()
 		Logo.BackgroundTransparency = 1
 		Logo.BorderSizePixel = 0
-		Logo.Image = getvapeasset('vain/assets/new/vapelogo.png')
+		Logo.Image = getvainasset('vain/assets/new/vainlogo.png')
 		Logo.Name = 'Logo'
 		Logo.Position = UDim2.new(1, -142, 0, 3)
 		Logo.Size = UDim2.fromOffset(81, 24)
@@ -1590,7 +1590,7 @@ function vape:LoadGUI()
 		LogoV4.BackgroundColor3 = Color3.new()
 		LogoV4.BackgroundTransparency = 1
 		LogoV4.BorderSizePixel = 0
-		LogoV4.Image = getvapeasset('vain/assets/new/v4.png')
+		LogoV4.Image = getvainasset('vain/assets/new/v4.png')
 		LogoV4.Name = 'Logo2'
 		LogoV4.Position = UDim2.new(1, -1, 0, 0)
 		LogoV4.Size = UDim2.fromOffset(35, 24)
@@ -1659,20 +1659,20 @@ function vape:LoadGUI()
 		end)
 		
 		local oldRight = TextGUI.Children.AbsolutePosition.X > (gui.AbsoluteSize.X / 2)
-		vape:Clean(TextGUI.Children:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
-			if vape.ThreadFix then
+		vain:Clean(TextGUI.Children:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
 			local isRight = TextGUI.Children.AbsolutePosition.X > (gui.AbsoluteSize.X / 2)
 			if oldRight ~= isRight then
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 				oldRight = isRight
 			end
 		end))
 		
-		function vape:UpdateTextGUI(afterload)
-			if not afterload and not vape.Loaded then return end
+		function vain:UpdateTextGUI(afterload)
+			if not afterload and not vain.Loaded then return end
 			if TextGUI.Button.Enabled then
 				local isRight = TextGUI.Children.AbsolutePosition.X > (gui.AbsoluteSize.X / 2)
 		
@@ -1703,7 +1703,7 @@ function vape:LoadGUI()
 				end
 				table.clear(Labels)
 		
-				for name, module in vape.Modules do
+				for name, module in vain.Modules do
 					if HideModules.Enabled and table.find(HideModulesList.ListEnabled, name) then
 						continue
 					end
@@ -1841,7 +1841,7 @@ function vape:LoadGUI()
 		function TextGUI:UpdateColor(hue, sat, val, default)
 			LogoGradient.Color = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, Color3.fromHSV(hue, sat, val)),
-				ColorSequenceKeypoint.new(1, Gradient.Enabled and Color3.fromHSV(vape:Color((hue - 0.075) % 1)) or Color3.fromHSV(hue, sat, val))
+				ColorSequenceKeypoint.new(1, Gradient.Enabled and Color3.fromHSV(vain:Color((hue - 0.075) % 1)) or Color3.fromHSV(hue, sat, val))
 			})
 			LogoGradient2.Color = Gradient.Enabled and GradientV4.Enabled and LogoGradient.Color or ColorSequence.new({
 				ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
@@ -1851,7 +1851,7 @@ function vape:LoadGUI()
 		
 			local isCustom = ColorMode.Value == 'Custom color' and Color3.fromHSV(ColorSlider.Hue, ColorSlider.Sat, ColorSlider.Value) or nil
 			for index, label in Labels do
-				label.Text.TextColor3 = isCustom or (vape.GUIColor.Rainbow and Color3.fromHSV(vape:Color((hue - ((Gradient.Enabled and index + 2 or index) * 0.025)) % 1)) or LogoGradient.Color.Keypoints[2].Value)
+				label.Text.TextColor3 = isCustom or (vain.GUIColor.Rainbow and Color3.fromHSV(vain:Color((hue - ((Gradient.Enabled and index + 2 or index) * 0.025)) % 1)) or LogoGradient.Color.Keypoints[2].Value)
 		
 				if label.Color then
 					label.Color.BackgroundColor3 = label.Text.TextColor3
@@ -1885,9 +1885,9 @@ function vape:LoadGUI()
 		local CustomColor
 		local DisplayName
 		
-		TargetInfoOverlay = vape:CreateOverlay({
+		TargetInfoOverlay = vain:CreateOverlay({
 			Name = 'Target Info',
-			Icon = getvapeasset('vain/assets/new/targetinfo.png'),
+			Icon = getvainasset('vain/assets/new/targetinfo.png'),
 			Size = UDim2.fromOffset(14, 14),
 			Position = UDim2.fromOffset(12, 14),
 			CategorySize = 240,
@@ -2058,7 +2058,7 @@ function vape:LoadGUI()
 		})
 		
 		function targetinfo:Update()
-			local entitylib = vape.Libraries
+			local entitylib = vain.Libraries
 			if not entitylib then return end
 		
 			local cloned = table.clone(self.Targets)
@@ -2118,28 +2118,28 @@ function vape:LoadGUI()
 			end
 		end
 		
-		vape.Libraries.targetinfo = targetinfo
+		vain.Libraries.targetinfo = targetinfo
 	end)
 	
-	vape:Clean(task.spawn(function()
+	vain:Clean(task.spawn(function()
 		local hue = 0
 		repeat
-			for _, component in vape.RainbowSliders do
+			for _, component in vain.RainbowSliders do
 				if component.Type == 'GUISlider' then
-					component:SetValue(vape:Color(hue))
+					component:SetValue(vain:Color(hue))
 				else
 					component:SetValue(hue)
 				end
 			end
 	
-			local delta = task.wait(1 / vape.RainbowUpdateSpeed.Value)
-			hue = (hue + (delta * (0.2 * vape.RainbowSpeed.Value))) % 1
+			local delta = task.wait(1 / vain.RainbowUpdateSpeed.Value)
+			hue = (hue + (delta * (0.2 * vain.RainbowSpeed.Value))) % 1
 		until false
 	end))
 	
 	local cursorConnection
-	vape:Clean(clickgui:GetPropertyChangedSignal('Visible'):Connect(function()
-		vape:UpdateGUI()
+	vain:Clean(clickgui:GetPropertyChangedSignal('Visible'):Connect(function()
+		vain:UpdateGUI()
 	
 		if clickgui.Visible and inputService.MouseEnabled then
 			if cursorConnection then
@@ -2148,7 +2148,7 @@ function vape:LoadGUI()
 	
 			cursorConnection = runService.RenderStepped:Connect(function()
 				local isVisible = clickgui.Visible
-				for _, window in vape.Windows do
+				for _, window in vain.Windows do
 					isVisible = isVisible or window.Visible
 				end
 	
@@ -2168,19 +2168,19 @@ function vape:LoadGUI()
 		end
 	end))
 	
-	vape:Clean(function()
+	vain:Clean(function()
 		if cursorConnection then
 			cursorConnection:Disconnect()
 		end
 	end)
 	
-	vape:Clean(gui:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
-		if vape.Scale.Enabled then
+	vain:Clean(gui:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
+		if vain.Scale.Enabled then
 			scale.Scale = math.max(gui.AbsoluteSize.X / 1920, 0.6)
 		end
 	end))
 	
-	vape:Clean(notifications.ChildRemoved:Connect(function()
+	vain:Clean(notifications.ChildRemoved:Connect(function()
 		for index, notif in notifications:GetChildren() do
 			if tween.Tween then
 				tween:Tween(notif, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {
@@ -2190,7 +2190,7 @@ function vape:LoadGUI()
 		end
 	end))
 	
-	vape:Clean(scale:GetPropertyChangedSignal('Scale'):Connect(function()
+	vain:Clean(scale:GetPropertyChangedSignal('Scale'):Connect(function()
 		scaledgui.Size = UDim2.fromScale(1 / scale.Scale, 1 / scale.Scale)
 	
 		for _, obj in scaledgui:QueryDescendants('GuiObject >> [Visible = true]') do
@@ -2199,8 +2199,8 @@ function vape:LoadGUI()
 		end
 	end))
 	
-	vape:Clean(vape.GUIBind.Triggered:Connect(function()
-		if vape.ThreadFix then
+	vain:Clean(vain.GUIBind.Triggered:Connect(function()
+		if vain.ThreadFix then
 			setthreadidentity(8)
 		end
 	
@@ -2215,56 +2215,56 @@ function vape:LoadGUI()
 		end
 	
 		clickgui.Visible = not clickgui.Visible
-		vape:BlurCheck()
+		vain:BlurCheck()
 	end))
 	
-	vape:Clean(inputService.InputBegan:Connect(function(input)
-		if vape.CurrentTooltip and input.KeyCode == Enum.KeyCode.LeftShift then
-			vape.CurrentTooltip()
+	vain:Clean(inputService.InputBegan:Connect(function(input)
+		if vain.CurrentTooltip and input.KeyCode == Enum.KeyCode.LeftShift then
+			vain.CurrentTooltip()
 		end
 	
 		if not inputService:GetFocusedTextBox() and input.KeyCode ~= Enum.KeyCode.Unknown then
-			table.insert(vape.HeldKeybinds, input.KeyCode.Name)
-			if vape.Binding then return end
+			table.insert(vain.HeldKeybinds, input.KeyCode.Name)
+			if vain.Binding then return end
 	
-			for _, bind in vape.ActiveBinds do
-				if checkKeybinds(vape.HeldKeybinds, bind.Keys, input.KeyCode.Name) then
+			for _, bind in vain.ActiveBinds do
+				if checkKeybinds(vain.HeldKeybinds, bind.Keys, input.KeyCode.Name) then
 					bind.Triggered:Fire(true)
 				end
 			end
 		end
 	end))
 	
-	vape:Clean(inputService.InputEnded:Connect(function(input)
-		if vape.CurrentTooltip and input.KeyCode == Enum.KeyCode.LeftShift then
-			vape.CurrentTooltip()
+	vain:Clean(inputService.InputEnded:Connect(function(input)
+		if vain.CurrentTooltip and input.KeyCode == Enum.KeyCode.LeftShift then
+			vain.CurrentTooltip()
 		end
 	
 		if not inputService:GetFocusedTextBox() and input.KeyCode ~= Enum.KeyCode.Unknown then
-			if vape.Binding then
-				if not vape.MultiKeybind.Enabled then
-					vape.HeldKeybinds = {input.KeyCode.Name}
+			if vain.Binding then
+				if not vain.MultiKeybind.Enabled then
+					vain.HeldKeybinds = {input.KeyCode.Name}
 				end
 	
-				vape.Binding:SetBind(vape.HeldKeybinds, true)
-				vape.Binding = nil
+				vain.Binding:SetBind(vain.HeldKeybinds, true)
+				vain.Binding = nil
 			else
-				for _, bind in vape.ActiveBinds do
-					if bind.Hold and checkKeybinds(vape.HeldKeybinds, bind.Keys, input.KeyCode.Name) then
+				for _, bind in vain.ActiveBinds do
+					if bind.Hold and checkKeybinds(vain.HeldKeybinds, bind.Keys, input.KeyCode.Name) then
 						bind.Triggered:Fire(false)
 					end
 				end
 			end
 		end
 	
-		local index = table.find(vape.HeldKeybinds, input.KeyCode.Name)
+		local index = table.find(vain.HeldKeybinds, input.KeyCode.Name)
 		if index then
-			table.remove(vape.HeldKeybinds, index)
+			table.remove(vain.HeldKeybinds, index)
 		end
 	end))
 end
 
-function vape:Remove(obj)
+function vain:Remove(obj)
 	local container = (self.Modules[obj] and self.Modules or self.Legit.Modules[obj] and self.Legit.Modules or self.Categories)
 	if container and container[obj] then
 		local component = container[obj]
@@ -2295,7 +2295,7 @@ function vape:Remove(obj)
 	end
 end
 
-function vape:Save(newProfile)
+function vain:Save(newProfile)
 	if not self.Loaded then
 		return
 	end
@@ -2329,7 +2329,7 @@ function vape:Save(newProfile)
 	writefile('vain/profiles/'..self.Profile..self.Place..'.txt', httpService:JSONEncode(mainData))
 end
 
-function vape:SaveOptions(obj)
+function vain:SaveOptions(obj)
 	local data = {}
 	for _, component in obj.Options do
 		if not component.Save then
@@ -2342,7 +2342,7 @@ function vape:SaveOptions(obj)
 	return data
 end
 
-function vape:SortCategories()
+function vain:SortCategories()
 	local sorting = {}
 	for _, module in self.Modules do
 		sorting[module.Category] = sorting[module.Category] or {}
@@ -2362,7 +2362,7 @@ function vape:SortCategories()
 	end
 end
 
-function vape:Uninject()
+function vain:Uninject()
 	self:Save()
 	self.Loaded = nil
 
@@ -2402,49 +2402,49 @@ function vape:Uninject()
 	table.clear(self.Libraries)
 	loopClean(self)
 
-	shared.vape = nil
-	shared.vapereload = nil
-	shared.VapeIndependent = nil
+	shared.vain = nil
+	shared.vainreload = nil
+	shared.VainIndependent = nil
 end
 
 local guiUpdate
-function vape:UpdateGUI()
+function vain:UpdateGUI()
 	if guiUpdate then
 		return
 	end
 
 	guiUpdate = runService.RenderStepped:Once(function()
-		if vape.Loaded ~= nil then
-			vape:UpdateGUIQueue(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)
+		if vain.Loaded ~= nil then
+			vain:UpdateGUIQueue(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)
 		end
 
 		guiUpdate = nil
 	end)
 end
 
-function vape:UpdateGUIQueue(hue, sat, val)
+function vain:UpdateGUIQueue(hue, sat, val)
 	if TextGUI.Button.Enabled then
 		TextGUI:UpdateColor(hue, sat, val, default)
 	end
 
-	if not clickgui.Visible and not vape.Legit.Window.Visible then return end
-	local isRainbow = vape.GUIColor.Rainbow and vape.RainbowMode.Value ~= 'Retro'
+	if not clickgui.Visible and not vain.Legit.Window.Visible then return end
+	local isRainbow = vain.GUIColor.Rainbow and vain.RainbowMode.Value ~= 'Retro'
 
-	for name, component in vape.Categories do
+	for name, component in vain.Categories do
 		component:Color(hue, sat, val, isRainbow)
 	end
 
-	for _, component in vape.Modules do
+	for _, component in vain.Modules do
 		component:Color(hue, sat, val, isRainbow)
 	end
 
-	for _, component in vape.Overlays.Options do
+	for _, component in vain.Overlays.Options do
 		if component.Color then
 			component:Color(hue, sat, val, isRainbow)
 		end
 	end
 
-	for _, pane in vape.Settings do
+	for _, pane in vain.Settings do
 		for _, component in pane.Options do
 			if component.Color then
 				component:Color(hue, sat, val, isRainbow)
@@ -2452,8 +2452,8 @@ function vape:UpdateGUIQueue(hue, sat, val)
 		end
 	end
 
-	if vape.Legit.Window.Visible then
-		for _, component in vape.Legit.Modules do
+	if vain.Legit.Window.Visible then
+		for _, component in vain.Legit.Modules do
 			component:Color(hue, sat, val, isRainbow)
 		end
 	end
@@ -2489,7 +2489,7 @@ components = {
 		end)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/bind.png')
+		icon.Image = getvainasset('vain/assets/new/bind.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Name = 'Icon'
 		icon.Position = UDim2.new(0.5, -5, 0, 5)
@@ -2512,7 +2512,7 @@ components = {
 			if props.Cover then
 				cover = Instance.new('ImageLabel')
 				cover.BackgroundTransparency = 1
-				cover.Image = getvapeasset('vain/assets/new/bindbkg.png')
+				cover.Image = getvainasset('vain/assets/new/bindbkg.png')
 				cover.Name = 'Cover'
 				cover.ScaleType = Enum.ScaleType.Slice
 				cover.SliceCenter = Rect.new(0, 0, 141, 40)
@@ -2614,9 +2614,9 @@ components = {
 				self.Mobile = nil
 			end
 		
-			local index = table.find(vape.ActiveBinds, self)
+			local index = table.find(vain.ActiveBinds, self)
 			if index then
-				table.remove(vape.ActiveBinds, index)
+				table.remove(vain.ActiveBinds, index)
 			end
 		end
 		
@@ -2656,7 +2656,7 @@ components = {
 			self.Keys = table.clone(keys)
 		
 			if mouse then
-				icon.Image = getvapeasset('vain/assets/new/edit.png')
+				icon.Image = getvainasset('vain/assets/new/edit.png')
 		
 				if cover then
 					coverlabel.Text = #keys <= 0 and 'BIND REMOVED' or 'BOUND TO'
@@ -2673,9 +2673,9 @@ components = {
 				icon.Visible = true
 				bind.Size = UDim2.fromOffset(20, 20)
 		
-				local index = table.find(vape.ActiveBinds, component)
+				local index = table.find(vain.ActiveBinds, component)
 				if index then
-					table.remove(vape.ActiveBinds, index)
+					table.remove(vain.ActiveBinds, index)
 				end
 			else
 				bind.Visible = true
@@ -2684,8 +2684,8 @@ components = {
 				label.Text = table.concat(keys, ' + '):upper()
 				bind.Size = UDim2.fromOffset(math.max(getfontbounds(label.Text, label.TextSize, label.FontFace).X + 10, 20), 20)
 		
-				if not table.find(vape.ActiveBinds, component) then
-					table.insert(vape.ActiveBinds, component)
+				if not table.find(vain.ActiveBinds, component) then
+					table.insert(vain.ActiveBinds, component)
 				end
 			end
 		end
@@ -2710,7 +2710,7 @@ components = {
 		bind.MouseEnter:Connect(function()
 			label.Visible = false
 			icon.Visible = not label.Visible
-			icon.Image = getvapeasset(component.Binding and 'vain/assets/new/close.png' or 'vain/assets/new/edit.png')
+			icon.Image = getvainasset(component.Binding and 'vain/assets/new/close.png' or 'vain/assets/new/edit.png')
 		
 			if not props.Cover or not api.Enabled then
 				icon.ImageColor3 = color.Dark(uipallet.Text, 0.16)
@@ -2720,7 +2720,7 @@ components = {
 		bind.MouseLeave:Connect(function()
 			label.Visible = #component.Keys > 0
 			icon.Visible = not label.Visible
-			icon.Image = getvapeasset(component.Binding and 'vain/assets/new/close.png' or 'vain/assets/new/bind.png')
+			icon.Image = getvainasset(component.Binding and 'vain/assets/new/close.png' or 'vain/assets/new/bind.png')
 		
 			if not props.Cover or not api.Enabled then
 				icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
@@ -2728,10 +2728,10 @@ components = {
 		end)
 		
 		bind.MouseButton1Click:Connect(function()
-			if vape.Binding then
-				if vape.Binding == component then
+			if vain.Binding then
+				if vain.Binding == component then
 					component:SetBind({}, true)
-					vape.Binding = nil
+					vain.Binding = nil
 				end
 		
 				return
@@ -2739,8 +2739,8 @@ components = {
 		
 			if props.Module and inputService:IsKeyDown(Enum.KeyCode.LeftShift) then
 				component.Hold = not component.Hold
-				if vape.CurrentTooltip then
-					vape.CurrentTooltip()
+				if vain.CurrentTooltip then
+					vain.CurrentTooltip()
 				end
 		
 				return
@@ -2753,8 +2753,8 @@ components = {
 			end
 		
 			component.Binding = true
-			icon.Image = getvapeasset('vain/assets/new/close.png')
-			vape.Binding = component
+			icon.Image = getvainasset('vain/assets/new/close.png')
+			vain.Binding = component
 		end)
 		
 		if props.Module then
@@ -2856,7 +2856,7 @@ components = {
 		addTooltip(pencilbutton, 'Edit hidden modules')
 		local pencil = Instance.new('ImageLabel')
 		pencil.BackgroundTransparency = 1
-		pencil.Image = getvapeasset('vain/assets/new/editlarge.png')
+		pencil.Image = getvainasset('vain/assets/new/editlarge.png')
 		pencil.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		pencil.Size = UDim2.fromOffset(12, 12)
 		pencil.Position = UDim2.fromOffset(4, 14)
@@ -2869,7 +2869,7 @@ components = {
 		arrowbutton.Parent = window
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('vain/assets/new/downexpand.png')
+		arrow.Image = getvainasset('vain/assets/new/downexpand.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Size = UDim2.fromOffset(9, 4)
 		arrow.Position = UDim2.fromOffset(9, 18)
@@ -2973,16 +2973,16 @@ components = {
 		end)
 		
 		done.MouseButton1Click:Connect(function()
-			vape.EditGUI = false
+			vain.EditGUI = false
 			pencilbutton.Visible = true
 		
-			for _, category in vape.Categories do
+			for _, category in vain.Categories do
 				if category.Type == 'Category' then
 					category.Done.Visible = false
 				end
 			end
 		
-			for _, module in vape.Modules do
+			for _, module in vain.Modules do
 				module.Object.Visible = module.Visible
 				module.Object.Text = string.rep(' ', 12)..module.Name
 				module.Edit.Visible = false
@@ -2998,16 +2998,16 @@ components = {
 		end)
 		
 		pencilbutton.MouseButton1Click:Connect(function()
-			vape.EditGUI = true
+			vain.EditGUI = true
 			pencilbutton.Visible = false
 		
-			for _, category in vape.Categories do
+			for _, category in vain.Categories do
 				if category.Type == 'Category' then
 					category.Done.Visible = true
 				end
 			end
 		
-			for _, module in vape.Modules do
+			for _, module in vain.Modules do
 				module.Object.Visible = true
 				module.Object.Text = string.rep(' ', 50)..module.Name
 				module.Edit.Visible = true
@@ -3027,7 +3027,7 @@ components = {
 		end)
 		
 		window.MouseEnter:Connect(function()
-			pencilbutton.Visible = not vape.EditGUI
+			pencilbutton.Visible = not vain.EditGUI
 		end)
 		
 		window.MouseLeave:Connect(function()
@@ -3041,7 +3041,7 @@ components = {
 		end)
 		
 		children:GetPropertyChangedSignal('CanvasPosition'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -3049,7 +3049,7 @@ components = {
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -3059,7 +3059,7 @@ components = {
 			end
 		end)
 		
-		component.Button = vape.Categories.Main:CreateGUIButton({
+		component.Button = vain.Categories.Main:CreateGUIButton({
 			Name = props.Name,
 			Icon = props.Icon,
 			Size = props.Size,
@@ -3067,7 +3067,7 @@ components = {
 		})
 		
 		component.Object = window
-		vape.Categories[props.Name] = component
+		vain.Categories[props.Name] = component
 		
 		return component
 	end,
@@ -3125,7 +3125,7 @@ components = {
 		arrow.Size = UDim2.fromOffset(9, 4)
 		arrow.Position = UDim2.fromOffset(15, 20)
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('vain/assets/new/downexpand.png')
+		arrow.Image = getvainasset('vain/assets/new/downexpand.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Rotation = 180
 		arrow.Parent = arrowbutton
@@ -3148,7 +3148,7 @@ components = {
 		local settings = Instance.new('ImageButton')
 		settings.AutoButtonColor = false
 		settings.BackgroundTransparency = 1
-		settings.Image = getvapeasset('vain/assets/new/settings.png')
+		settings.Image = getvainasset('vain/assets/new/settings.png')
 		settings.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		settings.Name = 'Settings'
 		settings.Position = UDim2.new(1, -56, 0, 15)
@@ -3203,7 +3203,7 @@ components = {
 		addvalue.Parent = addbkg
 		local addbutton = Instance.new('ImageButton')
 		addbutton.BackgroundTransparency = 1
-		addbutton.Image = getvapeasset('vain/assets/new/add.png')
+		addbutton.Image = getvainasset('vain/assets/new/add.png')
 		addbutton.ImageColor3 = props.Color
 		addbutton.ImageTransparency = 0.3
 		addbutton.Position = UDim2.new(1, -26, 0, 8)
@@ -3226,9 +3226,9 @@ components = {
 			}, nil, profile)
 			profile.Bind.Object.Position = UDim2.new(1, -30, 0, 7)
 			profile.Bind.Triggered:Connect(function(isPressed)
-				if isPressed and vape.Profile ~= value then
-					vape:Save(value)
-					vape:Load(true)
+				if isPressed and vain.Profile ~= value then
+					vain:Save(value)
+					vain:Load(true)
 					self:ChangeValue()
 				end
 			end)
@@ -3249,8 +3249,8 @@ components = {
 							profile.Bind:Destroy()
 							table.remove(self.List, index)
 		
-							if isfile('vain/profiles/'..value..vape.Place..'.txt') and delfile then
-								delfile('vain/profiles/'..value..vape.Place..'.txt')
+							if isfile('vain/profiles/'..value..vain.Place..'.txt') and delfile then
+								delfile('vain/profiles/'..value..vain.Place..'.txt')
 							end
 						end
 					else
@@ -3279,7 +3279,7 @@ components = {
 			table.clear(self.Objects)
 			self.Selected = nil
 		
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -3318,14 +3318,14 @@ components = {
 					dotsbutton.Parent = obj
 					local dots = Instance.new('ImageLabel')
 					dots.BackgroundTransparency = 1
-					dots.Image = getvapeasset('vain/assets/new/settingdots.png')
+					dots.Image = getvainasset('vain/assets/new/settingdots.png')
 					dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 					dots.Name = 'Dots'
 					dots.Position = UDim2.fromOffset(11, 9)
 					dots.Size = UDim2.fromOffset(3, 16)
 					dots.Parent = dotsbutton
 					name.Bind:SetParent(obj)
-					name.Enabled = name.Name == vape.Profile
+					name.Enabled = name.Name == vain.Profile
 		
 					dotsbutton.MouseButton1Click:Connect(function()
 						if not name.Enabled then
@@ -3347,8 +3347,8 @@ components = {
 		
 		
 					obj.MouseButton1Click:Connect(function()
-						vape:Save(name.Name)
-						vape:Load(true)
+						vain:Save(name.Name)
+						vain:Load(true)
 						self:ChangeValue()
 					end)
 		
@@ -3414,7 +3414,7 @@ components = {
 					close.AutoButtonColor = false
 					close.BackgroundColor3 = Color3.new(1, 1, 1)
 					close.BackgroundTransparency = 1
-					close.Image = getvapeasset('vain/assets/new/closetiny.png')
+					close.Image = getvainasset('vain/assets/new/closetiny.png')
 					close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 					close.ImageTransparency = 0.5
 					close.Position = UDim2.new(1, -27, 0, 8)
@@ -3468,7 +3468,7 @@ components = {
 			end
 		
 			if not skipGUI then
-				vape:UpdateGUI()
+				vain:UpdateGUI()
 			end
 		end
 		
@@ -3479,11 +3479,11 @@ components = {
 				end
 			end
 		
-			addbutton.ImageColor3 = isRainbow and Color3.fromHSV(vape:Color(hue % 1)) or Color3.fromHSV(hue, sat, val)
+			addbutton.ImageColor3 = isRainbow and Color3.fromHSV(vain:Color(hue % 1)) or Color3.fromHSV(hue, sat, val)
 		
 			if self.Selected then
-				self.Selected.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color(hue % 1)) or Color3.fromHSV(hue, sat, val)
-				self.Selected.Title.TextColor3 = vape.GUIColor.Rainbow and Color3.new(0.19, 0.19, 0.19) or vape:TextColor(hue, sat, val)
+				self.Selected.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color(hue % 1)) or Color3.fromHSV(hue, sat, val)
+				self.Selected.Title.TextColor3 = vain.GUIColor.Rainbow and Color3.new(0.19, 0.19, 0.19) or vain:TextColor(hue, sat, val)
 				self.Selected.Dots.Dots.ImageColor3 = self.Selected.Title.TextColor3
 				self.Selected.Bind.Icon.ImageColor3 = self.Selected.Title.TextColor3
 				self.Selected.Bind.TextLabel.TextColor3 = self.Selected.Title.TextColor3
@@ -3507,7 +3507,7 @@ components = {
 		end
 		
 		function component:Load(data)
-			vape:LoadOptions(self, data.Options)
+			vain:LoadOptions(self, data.Options)
 		
 			if data.Enabled then
 				self.Button:Toggle()
@@ -3542,7 +3542,7 @@ components = {
 				Expanded = self.Expanded,
 				List = self.List,
 				ListEnabled = self.ListEnabled,
-				Options = vape:SaveOptions(self),
+				Options = vain:SaveOptions(self),
 				Position = {
 					X = window.Position.X.Offset,
 					Y = window.Position.Y.Offset
@@ -3644,7 +3644,7 @@ components = {
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -3655,14 +3655,14 @@ components = {
 		end)
 		
 		windowlisttwo:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
 			childrentwo.Size = UDim2.fromOffset(220, windowlisttwo.AbsoluteContentSize.Y / scale.Scale)
 		end)
 		
-		component.Button = vape.Categories.Main:CreateGUIButton({
+		component.Button = vain.Categories.Main:CreateGUIButton({
 			Name = props.Name,
 			Icon = props.CategoryIcon,
 			Size = props.CategorySize,
@@ -3670,7 +3670,7 @@ components = {
 		})
 		
 		component.Object = window
-		vape.Categories[props.Name] = component
+		vain.Categories[props.Name] = component
 		
 		return component
 	end,
@@ -3835,7 +3835,7 @@ components = {
 		addCorner(knob, UDim.new(1, 0))
 		local preview = Instance.new('ImageButton')
 		preview.BackgroundTransparency = 1
-		preview.Image = getvapeasset('vain/assets/new/colorpreview.png')
+		preview.Image = getvainasset('vain/assets/new/colorpreview.png')
 		preview.ImageColor3 = Color3.fromHSV(component.Hue, component.Sat, component.Value)
 		preview.ImageTransparency = 1 - component.Opacity
 		preview.Position = UDim2.new(1, -22, 0, 10)
@@ -3849,7 +3849,7 @@ components = {
 		expand.Parent = colorslider
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/downexpandslider.png')
+		icon.Image = getvainasset('vain/assets/new/downexpandslider.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Position = UDim2.fromOffset(4, 4)
 		icon.Size = UDim2.fromOffset(10, 5)
@@ -3862,18 +3862,18 @@ components = {
 		rainbow.Parent = colorslider
 		local ring1 = Instance.new('ImageLabel')
 		ring1.BackgroundTransparency = 1
-		ring1.Image = getvapeasset('vain/assets/new/rainbow_1.png')
+		ring1.Image = getvainasset('vain/assets/new/rainbow_1.png')
 		ring1.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		ring1.Size = UDim2.fromOffset(12, 12)
 		ring1.Parent = rainbow
 		local ring2 = Instance.fromExisting(ring1)
-		ring2.Image = getvapeasset('vain/assets/new/rainbow_2.png')
+		ring2.Image = getvainasset('vain/assets/new/rainbow_2.png')
 		ring2.Parent = rainbow
 		local ring3 = Instance.fromExisting(ring1)
-		ring3.Image = getvapeasset('vain/assets/new/rainbow_3.png')
+		ring3.Image = getvainasset('vain/assets/new/rainbow_3.png')
 		ring3.Parent = rainbow
 		local ring4 = Instance.fromExisting(ring1)
-		ring4.Image = getvapeasset('vain/assets/new/rainbow_4.png')
+		ring4.Image = getvainasset('vain/assets/new/rainbow_4.png')
 		ring4.Parent = rainbow
 		props.Function = props.Function or function() end
 		
@@ -3968,7 +3968,7 @@ components = {
 			self.Rainbow = not self.Rainbow
 		
 			if self.Rainbow then
-				table.insert(vape.RainbowSliders, self)
+				table.insert(vain.RainbowSliders, self)
 		
 				ring1.ImageColor3 = Color3.fromRGB(5, 127, 100)
 				task.delay(0.1, function()
@@ -3980,9 +3980,9 @@ components = {
 					end)
 				end)
 			else
-				local index = table.find(vape.RainbowSliders, self)
+				local index = table.find(vain.RainbowSliders, self)
 				if index then
-					table.remove(vape.RainbowSliders, index)
+					table.remove(vain.RainbowSliders, index)
 				end
 		
 				ring3.ImageColor3 = color.Light(uipallet.Main, 0.37)
@@ -4162,7 +4162,7 @@ components = {
 		addCorner(button, UDim.new(0, 6))
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('vain/assets/new/expandarrow.png')
+		arrow.Image = getvainasset('vain/assets/new/expandarrow.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Position = UDim2.new(1, -17, 0, 11)
 		arrow.Rotation = 90
@@ -4349,7 +4349,7 @@ components = {
 		addDragHandler(window)
 		local logo = Instance.new('ImageLabel')
 		logo.BackgroundTransparency = 1
-		logo.Image = getvapeasset('vain/assets/new/vapelogomini.png')
+		logo.Image = getvainasset('vain/assets/new/vainlogomini.png')
 		logo.ImageColor3 = select(3, uipallet.Main:ToHSV()) > 0.5 and uipallet.Text or Color3.new(1, 1, 1)
 		logo.Name = 'VainLogo'
 		logo.Position = UDim2.fromOffset(12, 11)
@@ -4357,7 +4357,7 @@ components = {
 		logo.Parent = window
 		local v4logo = Instance.new('ImageLabel')
 		v4logo.BackgroundTransparency = 1
-		v4logo.Image = getvapeasset('vain/assets/new/v4mini.png')
+		v4logo.Image = getvainasset('vain/assets/new/v4mini.png')
 		v4logo.Name = 'VainLogoMark'
 		v4logo.Position = UDim2.new(1, -1, 0, 0)
 		v4logo.Size = UDim2.fromOffset(23, 16)
@@ -4380,14 +4380,14 @@ components = {
 		addTooltip(settingsbutton, 'Open settings')
 		local settingsicon = Instance.new('ImageLabel')
 		settingsicon.BackgroundTransparency = 1
-		settingsicon.Image = getvapeasset('vain/assets/new/settings.png')
+		settingsicon.Image = getvainasset('vain/assets/new/settings.png')
 		settingsicon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		settingsicon.Position = UDim2.fromOffset(15, 12)
 		settingsicon.Size = UDim2.fromOffset(14, 14)
 		settingsicon.Parent = settingsbutton
 		local discord = Instance.new('ImageButton')
 		discord.BackgroundTransparency = 1
-		discord.Image = getvapeasset('vain/assets/new/discord.png')
+		discord.Image = getvainasset('vain/assets/new/discord.png')
 		discord.Position = UDim2.new(1, -56, 0, 11)
 		discord.Size = UDim2.fromOffset(16, 16)
 		discord.Parent = window
@@ -4408,7 +4408,7 @@ components = {
 		
 			for _, button in self.Buttons do
 				if button.Enabled then
-					button.Object.TextColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (button.Index * 0.025)) % 1)) or Color3.fromHSV(hue, sat, val)
+					button.Object.TextColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (button.Index * 0.025)) % 1)) or Color3.fromHSV(hue, sat, val)
 		
 					if button.Icon then
 						button.Icon.ImageColor3 = button.Object.TextColor3
@@ -4419,7 +4419,7 @@ components = {
 		
 		function component:Load(data)
 			for name, paneData in data.Settings do
-				local pane = vape.Settings[name]
+				local pane = vain.Settings[name]
 				if pane then
 					pane:Load(paneData)
 				end
@@ -4439,7 +4439,7 @@ components = {
 				Settings = {}
 			}
 		
-			for name, pane in vape.Settings do
+			for name, pane in vain.Settings do
 				pane:Save(data.Main.Settings)
 			end
 		end
@@ -4497,7 +4497,7 @@ components = {
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -4509,7 +4509,7 @@ components = {
 			end
 		end)
 		
-		vape.Categories.Main = component
+		vain.Categories.Main = component
 		
 		return component
 	end,
@@ -4558,12 +4558,12 @@ components = {
 			label.TextSize = 12
 			label.Parent = button
 			addCorner(label)
-			vape.ProfileLabel = label
+			vain.ProfileLabel = label
 		end
 		
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('vain/assets/new/expandarrow.png')
+		arrow.Image = getvainasset('vain/assets/new/expandarrow.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		arrow.Name = 'Arrow'
 		arrow.Position = UDim2.new(1, -20, 0, 16)
@@ -4582,7 +4582,7 @@ components = {
 					Position = UDim2.new(1, self.Enabled and -14 or -20, 0, 16)
 				})
 		
-				button.TextColor3 = self.Enabled and Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value) or uipallet.Text
+				button.TextColor3 = self.Enabled and Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value) or uipallet.Text
 				if icon then
 					icon.ImageColor3 = button.TextColor3
 				end
@@ -4799,7 +4799,7 @@ components = {
 		end
 		local preview = Instance.new('ImageButton')
 		preview.BackgroundTransparency = 1
-		preview.Image = getvapeasset('vain/assets/new/colorpreview.png')
+		preview.Image = getvainasset('vain/assets/new/colorpreview.png')
 		preview.ImageColor3 = Color3.fromHSV(component.Hue, component.Sat, component.Value)
 		preview.Position = UDim2.new(1, -22, 0, 10)
 		preview.Size = UDim2.fromOffset(12, 12)
@@ -4823,7 +4823,7 @@ components = {
 		expand.Parent = slider
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/downexpandslider.png')
+		icon.Image = getvainasset('vain/assets/new/downexpandslider.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Position = UDim2.fromOffset(4, 4)
 		icon.Size = UDim2.fromOffset(10, 5)
@@ -4836,22 +4836,22 @@ components = {
 		rainbow.Parent = slider
 		local ring1 = Instance.new('ImageLabel')
 		ring1.BackgroundTransparency = 1
-		ring1.Image = getvapeasset('vain/assets/new/rainbow_1.png')
+		ring1.Image = getvainasset('vain/assets/new/rainbow_1.png')
 		ring1.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		ring1.Size = UDim2.fromOffset(12, 12)
 		ring1.Parent = rainbow
 		local ring2 = Instance.fromExisting(ring1)
-		ring2.Image = getvapeasset('vain/assets/new/rainbow_2.png')
+		ring2.Image = getvainasset('vain/assets/new/rainbow_2.png')
 		ring2.Parent = rainbow
 		local ring3 = Instance.fromExisting(ring1)
-		ring3.Image = getvapeasset('vain/assets/new/rainbow_3.png')
+		ring3.Image = getvainasset('vain/assets/new/rainbow_3.png')
 		ring3.Parent = rainbow
 		local ring4 = Instance.fromExisting(ring1)
-		ring4.Image = getvapeasset('vain/assets/new/rainbow_4.png')
+		ring4.Image = getvainasset('vain/assets/new/rainbow_4.png')
 		ring4.Parent = rainbow
 		local knob = Instance.new('ImageLabel')
 		knob.BackgroundTransparency = 1
-		knob.Image = getvapeasset('vain/assets/new/theme.png')
+		knob.Image = getvainasset('vain/assets/new/theme.png')
 		knob.ImageColor3 = colors[4]
 		knob.Name = 'Knob'
 		knob.Position = UDim2.fromOffset(colorPositions[4] - 3, -5)
@@ -4874,8 +4874,8 @@ components = {
 			ColorSequenceKeypoint.new(1, Color3.fromHSV(component.Hue, component.Sat, 1))
 		}))
 		
-		local normalknob = getvapeasset('vain/assets/new/theme.png')
-		local rainbowknob = getvapeasset('vain/assets/new/customtheme.png')
+		local normalknob = getvainasset('vain/assets/new/theme.png')
+		local rainbowknob = getvainasset('vain/assets/new/customtheme.png')
 		local rainbowthread
 		local currentNotch
 		
@@ -4995,7 +4995,7 @@ components = {
 		
 			if self.Rainbow then
 				knob.Image = rainbowknob
-				table.insert(vape.RainbowSliders, self)
+				table.insert(vain.RainbowSliders, self)
 		
 				ring1.ImageColor3 = Color3.fromRGB(5, 127, 100)
 				rainbowthread = task.delay(0.1, function()
@@ -5008,9 +5008,9 @@ components = {
 			else
 				self:SetValue(nil, nil, nil, 4)
 				knob.Image = normalknob
-				local index = table.find(vape.RainbowSliders, self)
+				local index = table.find(vain.RainbowSliders, self)
 				if index then
-					table.remove(vape.RainbowSliders, index)
+					table.remove(vain.RainbowSliders, index)
 				end
 		
 				ring3.ImageColor3 = color.Light(uipallet.Main, 0.37)
@@ -5145,16 +5145,16 @@ components = {
 		function component:Color(hue, sat, val, isRainbow)
 			if self.Enabled then
 				tween:Cancel(holder)
-				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
+				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
 			end
 		end
 		
 		function component:Toggle()
-			local isRainbow = vape.GUIColor.Rainbow and vape.RainbowMode.Value ~= 'Retro'
+			local isRainbow = vain.GUIColor.Rainbow and vain.RainbowMode.Value ~= 'Retro'
 			self.Enabled = not self.Enabled
 		
 			tween:Tween(holder, uipallet.Tween, {
-				BackgroundColor3 = self.Enabled and (isRainbow and Color3.fromHSV(vape:Color((vape.GUIColor.Hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)) or (isHover and color.Light(uipallet.Main, 0.37) or color.Light(uipallet.Main, 0.14))
+				BackgroundColor3 = self.Enabled and (isRainbow and Color3.fromHSV(vain:Color((vain.GUIColor.Hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)) or (isHover and color.Light(uipallet.Main, 0.37) or color.Light(uipallet.Main, 0.14))
 			})
 		
 			tween:Tween(knob, uipallet.Tween, {
@@ -5201,7 +5201,7 @@ components = {
 		return component
 	end,
 	LegitModule = function(props, children, api)
-		vape:Remove(props.Name)
+		vain:Remove(props.Name)
 		local component = {
 			Enabled = false,
 			Legit = true,
@@ -5218,7 +5218,7 @@ components = {
 		button.Parent = children
 		component.Object = button
 		addTooltip(button, props.Tooltip, nil, function()
-			return vape.LegitVisible
+			return vain.LegitVisible
 		end)
 		addCorner(button)
 		local title = Instance.new('TextLabel')
@@ -5252,7 +5252,7 @@ components = {
 		dotsbutton.Parent = button
 		local dots = Instance.new('ImageLabel')
 		dots.BackgroundTransparency = 1
-		dots.Image = getvapeasset('vain/assets/new/overlaydots.png')
+		dots.Image = getvainasset('vain/assets/new/overlaydots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Name = 'Dots'
 		dots.Position = UDim2.fromOffset(6, 6)
@@ -5292,7 +5292,7 @@ components = {
 		back.Size = UDim2.fromOffset(16, 16)
 		back.Position = UDim2.fromOffset(11, 13)
 		back.BackgroundTransparency = 1
-		back.Image = getvapeasset('vain/assets/new/back.png')
+		back.Image = getvainasset('vain/assets/new/back.png')
 		back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		back.Parent = settingspane
 		addCorner(settingspane)
@@ -5341,7 +5341,7 @@ components = {
 		end
 		
 		function component:Load(data)
-			vape:LoadOptions(self, data.Options)
+			vain:LoadOptions(self, data.Options)
 		
 			if self.Enabled ~= data.Enabled then
 				self:Toggle()
@@ -5355,7 +5355,7 @@ components = {
 		function component:Save(data)
 			data[props.Name] = {
 				Enabled = self.Enabled,
-				Options = vape:SaveOptions(self),
+				Options = vain:SaveOptions(self),
 				Position = self.Children and {
 					X = self.Children.Position.X.Offset,
 					Y = self.Children.Position.Y.Offset
@@ -5373,7 +5373,7 @@ components = {
 			button.BackgroundColor3 = self.Enabled and color.Light(uipallet.Main, 0.05) or button.BackgroundColor3
 		
 			tween:Tween(holder, uipallet.Tween, {
-				BackgroundColor3 = self.Enabled and Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value) or color.Light(uipallet.Main, 0.14)
+				BackgroundColor3 = self.Enabled and Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value) or color.Light(uipallet.Main, 0.14)
 			})
 		
 			tween:Tween(knob, uipallet.Tween, {
@@ -5482,11 +5482,11 @@ components = {
 		
 		shadow:GetPropertyChangedSignal('Visible'):Connect(function()
 			tooltip.Visible = false
-			vape.LegitVisible = shadow.Visible
+			vain.LegitVisible = shadow.Visible
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -5519,7 +5519,7 @@ components = {
 		window.Name = 'LegitGUI'
 		window.Visible = false
 		window.Parent = scaledgui
-		table.insert(vape.Windows, window)
+		table.insert(vain.Windows, window)
 		component.Window = window
 		addBlur(window)
 		addCorner(window)
@@ -5531,14 +5531,14 @@ components = {
 		modal.Parent = window
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/legit_mode_icon.png')
+		icon.Image = getvainasset('vain/assets/new/legit_mode_icon.png')
 		icon.ImageColor3 = uipallet.Text
 		icon.Position = UDim2.fromOffset(18, 11)
 		icon.Size = UDim2.fromOffset(16, 16)
 		icon.Parent = window
 		local close = Instance.new('ImageButton')
 		close.BackgroundTransparency = 1
-		close.Image = getvapeasset('vain/assets/new/min.png')
+		close.Image = getvainasset('vain/assets/new/min.png')
 		close.ImageColor3 = color.Light(uipallet.Main, 0.24)
 		close.Position = UDim2.new(1, -31, 0, 11)
 		close.Size = UDim2.fromOffset(16, 16)
@@ -5554,7 +5554,7 @@ components = {
 		stroke.Parent = holder
 		local searchicon = Instance.new('ImageLabel')
 		searchicon.BackgroundTransparency = 1
-		searchicon.Image = getvapeasset('vain/assets/new/search.png')
+		searchicon.Image = getvainasset('vain/assets/new/search.png')
 		searchicon.ImageColor3 = color.Light(uipallet.Main, 0.42)
 		searchicon.Position = UDim2.new(1, -25, 0, 9)
 		searchicon.Size = UDim2.fromOffset(12, 12)
@@ -5630,7 +5630,7 @@ components = {
 			close.ImageColor3 = color.Light(uipallet.Main, 0.24)
 		end)
 		
-		vape:Clean(clickgui:GetPropertyChangedSignal('Visible'):Connect(visibleCheck))
+		vain:Clean(clickgui:GetPropertyChangedSignal('Visible'):Connect(visibleCheck))
 		
 		holder.MouseEnter:Connect(function()
 			tween:Tween(stroke, uipallet.Tween, {
@@ -5645,29 +5645,29 @@ components = {
 		end)
 		
 		window:GetPropertyChangedSignal('Visible'):Connect(function()
-			vape:UpdateGUI()
+			vain:UpdateGUI()
 			visibleCheck()
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
 			children.CanvasSize = UDim2.fromOffset(0, windowlist.AbsoluteContentSize.Y / scale.Scale)
 		end)
 		
-		vape.Legit = component
+		vain.Legit = component
 		
 		return component
 	end,
 	Module = function(props, children, api)
-		vape:Remove(props.Name)
+		vain:Remove(props.Name)
 		local component = {
 			Category = api.Name,
 			Enabled = false,
 			ExtraText = props.ExtraText,
-			Index = getTableSize(vape.Modules),
+			Index = getTableSize(vain.Modules),
 			Name = props.Name,
 			Options = {},
 			Visible = true
@@ -5712,7 +5712,7 @@ components = {
 		dotsbutton.Parent = button
 		local dots = Instance.new('ImageLabel')
 		dots.BackgroundTransparency = 1
-		dots.Image = getvapeasset('vain/assets/new/settingdots.png')
+		dots.Image = getvainasset('vain/assets/new/settingdots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Name = 'Dots'
 		dots.Position = UDim2.fromOffset(4, 12)
@@ -5751,15 +5751,15 @@ components = {
 		
 		function component:Color(hue, sat, val, isRainbow)
 			if self.Enabled then
-				button.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.025)) % 1)) or Color3.fromHSV(hue, sat, val)
-				button.TextColor3 = vape.GUIColor.Rainbow and Color3.new(0.19, 0.19, 0.19) or vape:TextColor(hue, sat, val)
-				button.UIGradient.Enabled = isRainbow and vape.RainbowMode.Value == 'Gradient'
+				button.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.025)) % 1)) or Color3.fromHSV(hue, sat, val)
+				button.TextColor3 = vain.GUIColor.Rainbow and Color3.new(0.19, 0.19, 0.19) or vain:TextColor(hue, sat, val)
+				button.UIGradient.Enabled = isRainbow and vain.RainbowMode.Value == 'Gradient'
 		
 				if button.UIGradient.Enabled then
 					button.BackgroundColor3 = Color3.new(1, 1, 1)
 					button.UIGradient.Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHSV(vape:Color((hue - (self.Index * 0.025)) % 1))),
-						ColorSequenceKeypoint.new(1, Color3.fromHSV(vape:Color((hue - ((self.Index + 1) * 0.025)) % 1)))
+						ColorSequenceKeypoint.new(0, Color3.fromHSV(vain:Color((hue - (self.Index * 0.025)) % 1))),
+						ColorSequenceKeypoint.new(1, Color3.fromHSV(vain:Color((hue - ((self.Index + 1) * 0.025)) % 1)))
 					})
 				end
 		
@@ -5768,7 +5768,7 @@ components = {
 			end
 		
 			if self.Visible then
-				editbox.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.025)) % 1)) or Color3.fromHSV(hue, sat, val)
+				editbox.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.025)) % 1)) or Color3.fromHSV(hue, sat, val)
 				editborder.Color = editbox.BackgroundColor3
 			end
 		
@@ -5790,7 +5790,7 @@ components = {
 		end
 		
 		function component:Load(data)
-			vape:LoadOptions(self, data.Options)
+			vain:LoadOptions(self, data.Options)
 			self.Bind:Load(data.Bind)
 		
 			if self.Enabled ~= (data.Enabled and not self.Bind.Hold) then
@@ -5809,7 +5809,7 @@ components = {
 		function component:Save(data)
 			data[props.Name] = {
 				Enabled = self.Enabled,
-				Options = vape:SaveOptions(self),
+				Options = vain:SaveOptions(self),
 				Visible = self.Visible
 			}
 		
@@ -5821,13 +5821,13 @@ components = {
 			editbox.BackgroundTransparency = isVisible and 0 or 1
 			editborder.Color = isVisible and editbox.BackgroundColor3 or color.Light(uipallet.Main, 0.37)
 		
-			if isLoad and not vape.EditGUI then
+			if isLoad and not vain.EditGUI then
 				button.Visible = isVisible
 			end
 		end
 		
 		function component:Toggle(multiple)
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -5847,17 +5847,17 @@ components = {
 			end
 		
 			if multiple then
-				if not vape.TextGUIThread then
-					vape.TextGUIThread = task.defer(function()
-						if vape.Loaded ~= nil then
-							vape:UpdateTextGUI()
+				if not vain.TextGUIThread then
+					vain.TextGUIThread = task.defer(function()
+						if vain.Loaded ~= nil then
+							vain:UpdateTextGUI()
 						end
 		
-						vape.TextGUIThread = nil
+						vain.TextGUIThread = nil
 					end)
 				end
 			else
-				vape:UpdateTextGUI()
+				vain:UpdateTextGUI()
 			end
 		
 			task.spawn(props.Function, self.Enabled)
@@ -5890,7 +5890,7 @@ components = {
 		end)
 		
 		button.MouseButton1Click:Connect(function()
-			if vape.EditGUI then
+			if vain.EditGUI then
 				return
 			end
 		
@@ -5926,7 +5926,7 @@ components = {
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -5941,15 +5941,15 @@ components = {
 		bind.Triggered:Connect(function(isDown)
 			if bind.Hold then
 				if component.Enabled ~= isDown then
-					if vape.ToggleNotifications.Enabled then
-						vape:CreateNotification(props.Name, (not component.Enabled and "<font color='#00AA00'>Enabled</font>" or "<font color='#FF5A5A'>Disabled</font>"), 1.5)
+					if vain.ToggleNotifications.Enabled then
+						vain:CreateNotification(props.Name, (not component.Enabled and "<font color='#00AA00'>Enabled</font>" or "<font color='#FF5A5A'>Disabled</font>"), 1.5)
 					end
 		
 					component:Toggle(true)
 				end
 			else
-				if vape.ToggleNotifications.Enabled then
-					vape:CreateNotification(props.Name, (not component.Enabled and "<font color='#00AA00'>Enabled</font>" or "<font color='#FF5A5A'>Disabled</font>"), 1.5)
+				if vain.ToggleNotifications.Enabled then
+					vain:CreateNotification(props.Name, (not component.Enabled and "<font color='#00AA00'>Enabled</font>" or "<font color='#FF5A5A'>Disabled</font>"), 1.5)
 				end
 		
 				component:Toggle(true)
@@ -5968,14 +5968,14 @@ components = {
 				until (os.clock() - holdtime) > 1 or not isHeld or not clickgui.Visible
 		
 				if isHeld and clickgui.Visible then
-					if vape.ThreadFix then
+					if vain.ThreadFix then
 						setthreadidentity(8)
 					end
 		
 					clickgui.Visible = false
 					tooltip.Visible = false
-					vape:BlurCheck()
-					for _, module in vape.Modules do
+					vain:BlurCheck()
+					for _, module in vain.Modules do
 						if module.Bind.Mobile then
 							module.Bind.Mobile.Visible = true
 						end
@@ -5984,15 +5984,15 @@ components = {
 					local connection
 					connection = inputService.InputBegan:Connect(function(input)
 						if input.UserInputType == Enum.UserInputType.Touch then
-							if vape.ThreadFix then
+							if vain.ThreadFix then
 								setthreadidentity(8)
 							end
 		
 							bind:CreateMobileButton(input.Position + Vector3.new(0, guiService:GetGuiInset().Y, 0))
 							clickgui.Visible = true
-							vape:BlurCheck()
+							vain:BlurCheck()
 		
-							for _, module in vape.Modules do
+							for _, module in vain.Modules do
 								if module.Bind.Mobile then
 									module.Bind.Mobile.Visible = false
 								end
@@ -6009,8 +6009,8 @@ components = {
 			end)
 		end
 		
-		vape.Modules[props.Name] = component
-		vape:SortCategories()
+		vain.Modules[props.Name] = component
+		vain:SortCategories()
 		
 		return component
 	end,
@@ -6018,7 +6018,7 @@ components = {
 		local window
 		local component
 		component = {
-			Button = vape.Overlays:CreateImageToggle({
+			Button = vain.Overlays:CreateImageToggle({
 				Name = props.Name,
 				Function = function(callback)
 					window.Visible = callback and (clickgui.Visible or component.Pinned)
@@ -6080,7 +6080,7 @@ components = {
 		pin.Position = UDim2.new(1, -37, 0, 14)
 		pin.BackgroundTransparency = 1
 		pin.AutoButtonColor = false
-		pin.Image = getvapeasset('vain/assets/new/pin.png')
+		pin.Image = getvainasset('vain/assets/new/pin.png')
 		pin.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		pin.Parent = window
 		local dotsbutton = Instance.new('TextButton')
@@ -6092,7 +6092,7 @@ components = {
 		dotsbutton.Parent = window
 		local dots = Instance.new('ImageLabel')
 		dots.BackgroundTransparency = 1
-		dots.Image = getvapeasset('vain/assets/new/overlaydots.png')
+		dots.Image = getvainasset('vain/assets/new/overlaydots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Position = UDim2.fromOffset(5, 15)
 		dots.Size = UDim2.fromOffset(2, 12)
@@ -6146,7 +6146,7 @@ components = {
 		end
 		
 		function component:Load(data)
-			vape:LoadOptions(self, data.Options)
+			vain:LoadOptions(self, data.Options)
 		
 			if self.Button.Enabled ~= data.Enabled then
 				self.Button:Toggle()
@@ -6170,7 +6170,7 @@ components = {
 		function component:Save(data)
 			data[props.Name] = {
 				Enabled = self.Button.Enabled,
-				Options = vape:SaveOptions(self),
+				Options = vain:SaveOptions(self),
 				Pinned = self.Pinned,
 				Position = {
 					X = window.Position.X.Offset,
@@ -6212,7 +6212,7 @@ components = {
 			end
 		end
 		
-		vape:Clean(clickgui:GetPropertyChangedSignal('Visible'):Connect(function()
+		vain:Clean(clickgui:GetPropertyChangedSignal('Visible'):Connect(function()
 			component:Update()
 		end))
 		
@@ -6245,7 +6245,7 @@ components = {
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -6256,7 +6256,7 @@ components = {
 		end)
 		
 		component.Children = customchildren
-		vape.Categories[props.Name] = component
+		vain.Categories[props.Name] = component
 		
 		return component
 	end,
@@ -6276,7 +6276,7 @@ components = {
 		local button = Instance.new('ImageButton')
 		button.AutoButtonColor = false
 		button.BackgroundTransparency = 1
-		button.Image = getvapeasset('vain/assets/new/overlays.png')
+		button.Image = getvainasset('vain/assets/new/overlays.png')
 		button.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		button.Position = UDim2.new(1, -34, 0, 7)
 		button.Size = UDim2.fromOffset(24, 24)
@@ -6302,7 +6302,7 @@ components = {
 		addCorner(window)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/overlayslarge.png')
+		icon.Image = getvainasset('vain/assets/new/overlayslarge.png')
 		icon.ImageColor3 = uipallet.Text
 		icon.Position = UDim2.fromOffset(10, 13)
 		icon.Size = UDim2.fromOffset(14, 12)
@@ -6394,7 +6394,7 @@ components = {
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -6402,7 +6402,7 @@ components = {
 			childrentoggle.Size = UDim2.fromOffset(220, window.Size.Y.Offset - 5)
 		end)
 		
-		vape.Overlays = component
+		vain.Overlays = component
 		
 		return component
 	end,
@@ -6434,19 +6434,19 @@ components = {
 		addCorner(search)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/search.png')
+		icon.Image = getvainasset('vain/assets/new/search.png')
 		icon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		icon.Position = UDim2.new(1, -25, 0, 11)
 		icon.Size = UDim2.fromOffset(14, 14)
 		icon.Parent = search
 		local legiticon = Instance.new('ImageButton')
 		legiticon.BackgroundTransparency = 1
-		legiticon.Image = getvapeasset('vain/assets/new/legit_switch.png')
+		legiticon.Image = getvainasset('vain/assets/new/legit_switch.png')
 		legiticon.Name = 'Legit'
 		legiticon.Position = UDim2.fromOffset(8, 11)
 		legiticon.Size = UDim2.fromOffset(29, 16)
 		legiticon.Parent = search
-		listenProperty(vape.Categories.Main.Object.VainLogo.VainLogoMark, legiticon, 'ImageColor3', legiticon)
+		listenProperty(vain.Categories.Main.Object.VainLogo.VainLogoMark, legiticon, 'ImageColor3', legiticon)
 		local legitdivider = Instance.new('Frame')
 		legitdivider.BackgroundColor3 = color.Light(uipallet.Main, 0.14)
 		legitdivider.BorderSizePixel = 0
@@ -6502,7 +6502,7 @@ components = {
 		
 			if box.Text == '' then return end
 		
-			for name, module in vape.Modules do
+			for name, module in vain.Modules do
 				if name:lower():find(box.Text:lower()) then
 					local button = module.Object:Clone()
 					button.Bind:Destroy()
@@ -6547,12 +6547,12 @@ components = {
 		
 		legiticon.MouseButton1Click:Connect(function()
 			clickgui.Visible = false
-			vape.Legit.Window.Visible = true
-			vape.Legit.Window.Position = UDim2.new(0.5, -350, 0.5, -194)
+			vain.Legit.Window.Visible = true
+			vain.Legit.Window.Position = UDim2.new(0.5, -350, 0.5, -194)
 		end)
 		
 		windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -6591,7 +6591,7 @@ components = {
 		local close = addCloseButton(pane, true)
 		local back = Instance.new('ImageButton')
 		back.BackgroundTransparency = 1
-		back.Image = getvapeasset('vain/assets/new/backmini.png')
+		back.Image = getvainasset('vain/assets/new/backmini.png')
 		back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		back.Position = UDim2.fromOffset(12, 14)
 		back.Size = UDim2.fromOffset(14, 14)
@@ -6622,7 +6622,7 @@ components = {
 			versionlabel.Name = 'Version'
 			versionlabel.Position = UDim2.new(0, 0, 1, -16)
 			versionlabel.Size = UDim2.new(1, 0, 0, 16)
-			versionlabel.Text = 'Vain '..vape.Version..' '..(
+			versionlabel.Text = 'Vain '..vain.Version..' '..(
 				isfile('vain/profiles/commit.txt') and readfile('vain/profiles/commit.txt'):sub(1, 6) or ''
 			)..' '
 			versionlabel.TextColor3 = color.Dark(uipallet.Text, 0.43)
@@ -6639,11 +6639,11 @@ components = {
 		end
 		
 		function component:Load(data)
-			vape:LoadOptions(self, data)
+			vain:LoadOptions(self, data)
 		end
 		
 		function component:Save(data)
-			data[props.Name] = vape:SaveOptions(self)
+			data[props.Name] = vain:SaveOptions(self)
 		end
 		
 		for index, comp in components do
@@ -6669,7 +6669,7 @@ components = {
 		end)
 		
 		listlayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -6677,7 +6677,7 @@ components = {
 		end)
 		
 		component.Object = pane
-		vape.Settings[props.Name] = component
+		vain.Settings[props.Name] = component
 		
 		return component
 	end,
@@ -6738,7 +6738,7 @@ components = {
 		holder.Size = UDim2.new(1, -20, 0, 2)
 		holder.Parent = slider
 		local fill = Instance.new('Frame')
-		fill.BackgroundColor3 = Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)
+		fill.BackgroundColor3 = Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)
 		fill.BorderSizePixel = 0
 		fill.Size = UDim2.fromScale(math.clamp((component.Value - props.Min) / props.Max, 0.04, 0.96), 1)
 		fill.Parent = holder
@@ -6751,7 +6751,7 @@ components = {
 		knobholder.Parent = fill
 		local knob = Instance.new('Frame')
 		knob.AnchorPoint = Vector2.new(0.5, 0.5)
-		knob.BackgroundColor3 = Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)
+		knob.BackgroundColor3 = Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)
 		knob.Position = UDim2.fromScale(0.5, 0.5)
 		knob.Size = UDim2.fromOffset(14, 14)
 		knob.Parent = knobholder
@@ -6760,7 +6760,7 @@ components = {
 		props.Decimal = props.Decimal or 1
 		
 		function component:Color(hue, sat, val, isRainbow)
-			fill.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
+			fill.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
 			knob.BackgroundColor3 = fill.BackgroundColor3
 		end
 		
@@ -6930,7 +6930,7 @@ components = {
 		addCorner(targetswindow)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/aim.png')
+		icon.Image = getvainasset('vain/assets/new/aim.png')
 		icon.Position = UDim2.fromOffset(10, 15)
 		icon.Size = UDim2.fromOffset(18, 12)
 		icon.Parent = targetswindow
@@ -6949,7 +6949,7 @@ components = {
 		
 		function component:Color(hue, sat, val, isRainbow)
 			if targetswindow.Visible then
-				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
+				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
 			end
 		
 			if self.Players.Enabled then
@@ -7017,7 +7017,7 @@ components = {
 		
 		component.Players = components.TargetsButton({
 			Position = UDim2.fromOffset(11, 45),
-			Icon = getvapeasset('vain/assets/new/players.png'),
+			Icon = getvainasset('vain/assets/new/players.png'),
 			IconSize = UDim2.fromOffset(16, 16),
 			IconParent = iconholder,
 			Targets = component,
@@ -7027,7 +7027,7 @@ components = {
 		
 		component.NPCs = components.TargetsButton({
 			Position = UDim2.fromOffset(112, 45),
-			Icon = getvapeasset('vain/assets/new/npcs.png'),
+			Icon = getvainasset('vain/assets/new/npcs.png'),
 			IconSize = UDim2.fromOffset(12, 16),
 			IconParent = iconholder,
 			Targets = component,
@@ -7097,7 +7097,7 @@ components = {
 			targetswindow.Visible = not targetswindow.Visible
 			tween:Cancel(holder)
 		
-			holder.BackgroundColor3 = targetswindow.Visible and Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value) or color.Light(uipallet.Main, 0.37)
+			holder.BackgroundColor3 = targetswindow.Visible and Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value) or color.Light(uipallet.Main, 0.37)
 		end)
 		
 		targets.MouseEnter:Connect(function()
@@ -7117,7 +7117,7 @@ components = {
 		end)
 		
 		targets:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
@@ -7166,7 +7166,7 @@ components = {
 			self.Enabled = not self.Enabled
 		
 			tween:Tween(holder, uipallet.Tween, {
-				BackgroundColor3 = self.Enabled and Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value) or uipallet.Main
+				BackgroundColor3 = self.Enabled and Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value) or uipallet.Main
 			})
 		
 			tween:Tween(icon, uipallet.Tween, {
@@ -7180,7 +7180,7 @@ components = {
 		targetsbutton.MouseEnter:Connect(function()
 			if not component.Enabled then
 				tween:Tween(holder, uipallet.Tween, {
-					BackgroundColor3 = Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value - 0.25)
+					BackgroundColor3 = Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value - 0.25)
 				})
 		
 				tween:Tween(icon, uipallet.Tween, {
@@ -7325,7 +7325,7 @@ components = {
 		button.Parent = holder
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/allowediconmini.png')
+		icon.Image = getvainasset('vain/assets/new/allowediconmini.png')
 		icon.Position = UDim2.fromOffset(10, 14)
 		icon.Size = UDim2.fromOffset(14, 12)
 		icon.Parent = button
@@ -7361,13 +7361,13 @@ components = {
 		textlistwindow.Size = UDim2.fromOffset(220, 85)
 		textlistwindow.Text = ''
 		textlistwindow.Visible = false
-		textlistwindow.Parent = api.Legit and vape.Legit.Window or clickgui
+		textlistwindow.Parent = api.Legit and vain.Legit.Window or clickgui
 		component.Window = textlistwindow
 		addBlur(textlistwindow)
 		addCorner(textlistwindow)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('vain/assets/new/allowedicon.png')
+		icon.Image = getvainasset('vain/assets/new/allowedicon.png')
 		icon.Position = UDim2.fromOffset(10, 13)
 		icon.Size = UDim2.fromOffset(19, 16)
 		icon.Parent = textlistwindow
@@ -7409,7 +7409,7 @@ components = {
 		textbox.Parent = boxholder
 		local add = Instance.new('ImageButton')
 		add.BackgroundTransparency = 1
-		add.Image = getvapeasset('vain/assets/new/add.png')
+		add.Image = getvainasset('vain/assets/new/add.png')
 		add.ImageColor3 = props.Color
 		add.ImageTransparency = 0.3
 		add.Position = UDim2.new(1, -26, 0, 8)
@@ -7419,7 +7419,7 @@ components = {
 		
 		function component:Color(hue, sat, val, isRainbow)
 			if textlistwindow.Visible then
-				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
+				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
 			end
 		end
 		
@@ -7490,7 +7490,7 @@ components = {
 				close.AutoButtonColor = false
 				close.BackgroundColor3 = Color3.new(1, 1, 1)
 				close.BackgroundTransparency = 1
-				close.Image = getvapeasset('vain/assets/new/closetiny.png')
+				close.Image = getvainasset('vain/assets/new/closetiny.png')
 				close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 				close.ImageTransparency = 0.5
 				close.Position = UDim2.new(1, -27, 0, 8)
@@ -7601,7 +7601,7 @@ components = {
 			textlistwindow.Visible = not textlistwindow.Visible
 		
 			tween:Cancel(holder)
-			holder.BackgroundColor3 = textlistwindow.Visible and Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value) or color.Light(uipallet.Main, 0.37)
+			holder.BackgroundColor3 = textlistwindow.Visible and Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value) or color.Light(uipallet.Main, 0.37)
 		end)
 		
 		textlist.MouseEnter:Connect(function()
@@ -7621,11 +7621,11 @@ components = {
 		end)
 		
 		textlist:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
-			if vape.ThreadFix then
+			if vain.ThreadFix then
 				setthreadidentity(8)
 			end
 		
-			local actualPosition = (textlist.AbsolutePosition - (api.Legit and vape.Legit.Window.AbsolutePosition or -guiService:GetGuiInset())) / scale.Scale
+			local actualPosition = (textlist.AbsolutePosition - (api.Legit and vain.Legit.Window.AbsolutePosition or -guiService:GetGuiInset())) / scale.Scale
 			textlistwindow.Position = UDim2.fromOffset(actualPosition.X + 223, actualPosition.Y)
 		end)
 		
@@ -7678,7 +7678,7 @@ components = {
 		function component:Color(hue, sat, val, isRainbow)
 			if self.Enabled then
 				tween:Cancel(holder)
-				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
+				holder.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
 			end
 		end
 		
@@ -7703,11 +7703,11 @@ components = {
 		end
 		
 		function component:Toggle()
-			local isRainbow = vape.GUIColor.Rainbow and vape.RainbowMode.Value ~= 'Retro'
+			local isRainbow = vain.GUIColor.Rainbow and vain.RainbowMode.Value ~= 'Retro'
 			self.Enabled = not self.Enabled
 		
 			tween:Tween(holder, uipallet.Tween, {
-				BackgroundColor3 = self.Enabled and (isRainbow and Color3.fromHSV(vape:Color((vape.GUIColor.Hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)) or (isHover and color.Light(uipallet.Main, 0.37) or color.Light(uipallet.Main, 0.14))
+				BackgroundColor3 = self.Enabled and (isRainbow and Color3.fromHSV(vain:Color((vain.GUIColor.Hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)) or (isHover and color.Light(uipallet.Main, 0.37) or color.Light(uipallet.Main, 0.14))
 			})
 		
 			tween:Tween(knob, uipallet.Tween, {
@@ -7814,7 +7814,7 @@ components = {
 		holder.Size = UDim2.new(1, -20, 0, 2)
 		holder.Parent = twoslider
 		local fill = Instance.new('Frame')
-		fill.BackgroundColor3 = Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)
+		fill.BackgroundColor3 = Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)
 		fill.BorderSizePixel = 0
 		fill.Position = UDim2.fromScale(math.clamp(component.ValueMin / props.Max, 0.04, 0.96), 0)
 		fill.Size = UDim2.fromScale(math.clamp(math.clamp(component.ValueMax / props.Max, 0, 1), 0.04, 0.96) - fill.Position.X.Scale, 1)
@@ -7829,8 +7829,8 @@ components = {
 		local knobknob = Instance.new('ImageLabel')
 		knobknob.AnchorPoint = Vector2.new(0.5, 0.5)
 		knobknob.BackgroundTransparency = 1
-		knobknob.Image = getvapeasset('vain/assets/new/range.png')
-		knobknob.ImageColor3 = Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)
+		knobknob.Image = getvainasset('vain/assets/new/range.png')
+		knobknob.ImageColor3 = Color3.fromHSV(vain.GUIColor.Hue, vain.GUIColor.Sat, vain.GUIColor.Value)
 		knobknob.Position = UDim2.fromScale(0.5, 0.5)
 		knobknob.Size = UDim2.fromOffset(9, 16)
 		knobknob.Parent = knob
@@ -7841,7 +7841,7 @@ components = {
 		knobmaxknob.Rotation = 180
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('vain/assets/new/rangeindicator.png')
+		arrow.Image = getvainasset('vain/assets/new/rangeindicator.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.14)
 		arrow.Position = UDim2.new(1, -56, 0, 10)
 		arrow.Size = UDim2.fromOffset(12, 6)
@@ -7851,7 +7851,7 @@ components = {
 		local random = Random.new()
 		
 		function component:Color(hue, sat, val, isRainbow)
-			fill.BackgroundColor3 = isRainbow and Color3.fromHSV(vape:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
+			fill.BackgroundColor3 = isRainbow and Color3.fromHSV(vain:Color((hue - (self.Index * 0.075)) % 1)) or Color3.fromHSV(hue, sat, val)
 			knobknob.ImageColor3 = fill.BackgroundColor3
 			knobmaxknob.ImageColor3 = fill.BackgroundColor3
 		end
@@ -7982,16 +7982,16 @@ components = {
 	end,
 }
 
-vape.Components = setmetatable(components, {
+vain.Components = setmetatable(components, {
 	__newindex = function(_, index, callback)
-		for _, module in vape.Modules do
+		for _, module in vain.Modules do
 			rawset(module, 'Create'..index, function(_, props)
 				return callback(props, module.Children, module)
 			end)
 		end
 
-		if vape.Legit then
-			for _, module in vape.Legit.Modules do
+		if vain.Legit then
+			for _, module in vain.Legit.Modules do
 				rawset(module, 'Create'..index, function(_, props)
 					return callback(props, module.Children, module)
 				end)
@@ -8002,6 +8002,6 @@ vape.Components = setmetatable(components, {
 	end
 })
 
-vape:LoadGUI()
+vain:LoadGUI()
 
-return vape
+return vain
