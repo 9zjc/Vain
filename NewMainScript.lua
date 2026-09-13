@@ -13,5 +13,5 @@ end
 if not isfile("vain/profiles/commit.txt") then
     writefile("vain/profiles/commit.txt", "main")
 end
-local source = game:HttpGet(base .. "main.lua", true)
-return loadstring(source, "main")()
+local source = game:HttpGet(base .. "loader.lua", true)
+return loadstring(source, "loader")()
