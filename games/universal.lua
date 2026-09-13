@@ -4339,6 +4339,12 @@ run(function()
 	local ESPLoop = {
 		Drawing2D = function()
 			for ent, EntityESP in Reference do
+				if not ent or not ent.RootPart or not ent.RootPart.Parent then
+					for _, obj in EntityESP do
+						obj.Visible = false
+					end
+					continue
+				end
 				if Distance.Enabled then
 					local distance = entitylib.isAlive and (entitylib.character.RootPart.Position - ent.RootPart.Position).Magnitude or math.huge
 					if distance < DistanceLimit.ValueMin or distance > DistanceLimit.ValueMax then
@@ -4389,6 +4395,12 @@ run(function()
 		end,
 		Drawing3D = function()
 			for ent, EntityESP in Reference do
+				if not ent or not ent.RootPart or not ent.RootPart.Parent then
+					for _, obj in EntityESP do
+						obj.Visible = false
+					end
+					continue
+				end
 				if Distance.Enabled then
 					local distance = entitylib.isAlive and (entitylib.character.RootPart.Position - ent.RootPart.Position).Magnitude or math.huge
 					if distance < DistanceLimit.ValueMin or distance > DistanceLimit.ValueMax then
@@ -4441,6 +4453,12 @@ run(function()
 		end,
 		DrawingSkeleton = function()
 			for ent, EntityESP in Reference do
+				if not ent or not ent.RootPart or not ent.RootPart.Parent then
+					for _, obj in EntityESP do
+						obj.Visible = false
+					end
+					continue
+				end
 				if Distance.Enabled then
 					local distance = entitylib.isAlive and (entitylib.character.RootPart.Position - ent.RootPart.Position).Magnitude or math.huge
 					if distance < DistanceLimit.ValueMin or distance > DistanceLimit.ValueMax then
