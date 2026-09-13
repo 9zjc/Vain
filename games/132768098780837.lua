@@ -430,7 +430,9 @@ run(function()
 	
 							for _, v in plrs do
 								local delta = (v.RootPart.Position - selfpos)
-								local angle = math.acos(localfacing:Dot((delta * Vector3.new(1, 0, 1)).Unit))
+								local flatDelta = delta * Vector3.new(1, 0, 1)
+								if flatDelta.Magnitude < 0.001 or localfacing.Magnitude < 0.001 then continue end
+								local angle = math.acos(math.clamp(localfacing.Unit:Dot(flatDelta.Unit), -1, 1))
 								if angle > (math.rad(AngleSlider.Value) / 2) then continue end
 	
 								table.insert(attacked, {
