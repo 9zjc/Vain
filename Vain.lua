@@ -1,7 +1,7 @@
 local CollectionService
 
 local license = ... or {}
-local REPO = "https://raw.githubusercontent.com/9zjc/Vain/70f03d942fb0b8fee06837fea048edd81c0aac05/"
+local REPO = "https://raw.githubusercontent.com/9zjc/Vain/8f7203746179deced32f37bf9361e32215e3f10b/"
 local CACHE_BUSTER = "?v=0920191"
 
 local function fetchModule(path)
