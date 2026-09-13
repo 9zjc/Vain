@@ -428,8 +428,12 @@ local sortmethods = {
 	Angle = function(a, b)
 		local selfrootpos = entitylib.character.RootPart.Position
 		local localfacing = entitylib.character.RootPart.CFrame.LookVector * Vector3.new(1, 0, 1)
-		local angle = math.acos(localfacing:Dot(((a.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)).Unit))
-		local angle2 = math.acos(localfacing:Dot(((b.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)).Unit))
+		local adelta = (a.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)
+		local bdelta = (b.Entity.RootPart.Position - selfrootpos) * Vector3.new(1, 0, 1)
+		if localfacing.Magnitude < 0.001 or adelta.Magnitude < 0.001 or bdelta.Magnitude < 0.001 then return false end
+		local facing = localfacing.Unit
+		local angle = math.acos(math.clamp(facing:Dot(adelta.Unit), -1, 1))
+		local angle2 = math.acos(math.clamp(facing:Dot(bdelta.Unit), -1, 1))
 		return angle < angle2
 	end
 }
@@ -1214,7 +1218,7 @@ run(function()
 		Function = function(callback)
 			if callback then
 				AimAssist:Clean(runService.Heartbeat:Connect(function(dt)
-					if entitylib.isAlive and store.hand.toolType == 'sword' and ((not ClickAim.Enabled) or (tick() - bedwars.SwordController.lastSwing) < 0.4) then
+					if entitylib.isAlive and entitylib.character and entitylib.character.RootPart and store.hand and store.hand.toolType == 'sword' and bedwars.SwordController and ((not ClickAim.Enabled) or (tick() - bedwars.SwordController.lastSwing) < 0.4) then
 						local ent = not KillauraTarget.Enabled and entitylib.EntityPosition({
 							Range = Distance.Value,
 							Part = 'RootPart',
@@ -1224,10 +1228,12 @@ run(function()
 							Sort = sortmethods[Sort.Value]
 						}) or store.KillauraTarget
 	
-						if ent then
+						if ent and ent.RootPart then
 							local delta = (ent.RootPart.Position - entitylib.character.RootPart.Position)
+							local flatDelta = delta * Vector3.new(1, 0, 1)
 							local localfacing = entitylib.character.RootPart.CFrame.LookVector * Vector3.new(1, 0, 1)
-							local angle = math.acos(localfacing:Dot((delta * Vector3.new(1, 0, 1)).Unit))
+							if flatDelta.Magnitude < 0.001 or localfacing.Magnitude < 0.001 then return end
+							local angle = math.acos(math.clamp(localfacing.Unit:Dot(flatDelta.Unit), -1, 1))
 							if angle >= (math.rad(AngleSlider.Value) / 2) then return end
 							targetinfo.Targets[ent] = tick() + 1
 							gameCamera.CFrame = gameCamera.CFrame:Lerp(CFrame.lookAt(gameCamera.CFrame.p, ent.RootPart.Position), (AimSpeed.Value + (StrafeIncrease.Enabled and (inputService:IsKeyDown(Enum.KeyCode.A) or inputService:IsKeyDown(Enum.KeyCode.D)) and 10 or 0)) * dt)
@@ -1263,7 +1269,7 @@ run(function()
 		Min = 1,
 		Max = 30,
 		Default = 30,
-		Suffx = function(val)
+		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
 		end
 	})
@@ -2060,7 +2066,12 @@ run(function()
 	local anims, AnimDelay, AnimTween, armC0 = vape.Libraries.auraanims, tick()
 	local AttackRemote = {FireServer = function() end}
 	task.spawn(function()
-		AttackRemote = bedwars.Client:Get(remotes.AttackEntity).instance
+		local success, remote = pcall(function()
+			return bedwars.Client:Get(remotes.AttackEntity).instance
+		end)
+		if success and remote then
+			AttackRemote = remote
+		end
 	end)
 
 	local function getAttackData()
@@ -2073,9 +2084,10 @@ run(function()
 		end
 
 		local sword = Limit.Enabled and store.hand or store.tools.sword
-		if not sword or not sword.tool then return false end
+		if not sword or not sword.tool or not bedwars.ItemMeta then return false end
 
 		local meta = bedwars.ItemMeta[sword.tool.Name]
+		if not meta or not meta.sword then return false end
 		if Limit.Enabled then
 			if store.hand.toolType ~= 'sword' or bedwars.DaoController.chargingMaid then return false end
 		end
@@ -2175,7 +2187,9 @@ run(function()
 
 							for _, v in plrs do
 								local delta = (v.RootPart.Position - selfpos)
-								local angle = math.acos(localfacing:Dot((delta * Vector3.new(1, 0, 1)).Unit))
+								local flatDelta = delta * Vector3.new(1, 0, 1)
+							if flatDelta.Magnitude < 0.001 or localfacing.Magnitude < 0.001 then continue end
+							local angle = math.acos(math.clamp(localfacing.Unit:Dot(flatDelta.Unit), -1, 1))
 								if angle > (math.rad(AngleSlider.Value) / 2) then continue end
 
 								table.insert(attacked, {
@@ -2202,7 +2216,7 @@ run(function()
 
 								if delta.Magnitude > AttackRange.Value then continue end
 
-								local actualRoot = v.Character.PrimaryPart
+								local actualRoot = v.Character and v.Character.PrimaryPart
 								if actualRoot then
 									local dir = CFrame.lookAt(selfpos, actualRoot.Position).LookVector
 									local pos = selfpos + dir * math.max(delta.Magnitude - 14.399, 0)
