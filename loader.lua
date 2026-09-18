@@ -46,9 +46,13 @@ if not shared.VapeDeveloper then
 	end)
 
 	local assetVer = '1'
-	local commit = subbed:find('currentOid')
-	commit = commit and subbed:sub(commit + 13, commit + 52) or nil
-	commit = commit and #commit == 40 and commit or 'main'
+	local commit = shared.VainCommit
+	if not commit then
+		commit = subbed:find('currentOid')
+		commit = commit and subbed:sub(commit + 13, commit + 52) or nil
+		commit = commit and #commit == 40 and commit or 'main'
+	end
+	commit = type(commit) == 'string' and #commit == 40 and commit or 'main'
 
 	if commit == 'main' or (isfile('vain/profiles/commit.txt') and readfile('vain/profiles/commit.txt') or '') ~= commit then
 		wipeFolder('vain')
